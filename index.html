@@ -229,12 +229,8 @@ audio::-webkit-media-controls-panel { background: var(--surface2); }
       <div class="nav-item" data-view="module-MBD"><span class="progress-dot none"></span> Mao's Birthday</div>
       <div class="nav-item" data-view="module-WLF"><span class="progress-dot none"></span> Welfare</div>
     </div>
-    <div class="sync-bar">
-      <div class="sync-status">
-        <span class="sync-dot disconnected" id="sync-dot"></span>
-        <span id="sync-status-text">Not syncing</span>
-      </div>
-      <button class="btn" style="width:100%;font-size:12px" onclick="showSyncModal()">Sync Settings</button>
+    <div class="sync-bar" id="account-bar">
+      <!-- Filled by JS: login form or logged-in state -->
     </div>
   </nav>
 
@@ -874,47 +870,55 @@ function saveState() {
 }
 
 // ============================================================
-// CLOUD SYNC (Cloudflare Worker + KV)
+// ACCOUNT & CLOUD SYNC
 // ============================================================
-const SYNC_WORKER_URL = localStorage.getItem('fsi-sync-url') || '';
-const SYNC_CODE = localStorage.getItem('fsi-sync-code') || '';
+const SYNC_URL = 'https://fsi-sync.zackwilson21.workers.dev';
 let syncTimer = null;
 
+async function hashCredentials(username, password) {
+  const data = new TextEncoder().encode(username.toLowerCase().trim() + ':' + password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function getAccount() {
+  const acct = localStorage.getItem('fsi-account');
+  return acct ? JSON.parse(acct) : null;
+}
+
+function isLoggedIn() { return !!getAccount(); }
+
 function debouncedSync() {
-  if (!SYNC_WORKER_URL || !SYNC_CODE) return;
+  if (!isLoggedIn()) return;
   clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => cloudPush(), 3000);
+  syncTimer = setTimeout(() => cloudPush(), 2000);
 }
 
 async function cloudPush() {
-  const url = localStorage.getItem('fsi-sync-url');
-  const code = localStorage.getItem('fsi-sync-code');
-  if (!url || !code) return;
-  setSyncStatus('syncing', 'Syncing...');
+  const acct = getAccount();
+  if (!acct) return;
+  updateAccountBar('syncing');
   try {
-    const resp = await fetch(url, {
+    const resp = await fetch(SYNC_URL, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, srs: state.srs, studied: state.studied })
+      body: JSON.stringify({ code: acct.key, srs: state.srs, studied: state.studied })
     });
-    if (resp.ok) setSyncStatus('connected', 'Synced just now');
-    else setSyncStatus('disconnected', 'Sync failed');
+    updateAccountBar(resp.ok ? 'connected' : 'error');
   } catch (e) {
-    setSyncStatus('disconnected', 'Offline');
+    updateAccountBar('offline');
   }
 }
 
 async function cloudPull() {
-  const url = localStorage.getItem('fsi-sync-url');
-  const code = localStorage.getItem('fsi-sync-code');
-  if (!url || !code) return;
-  setSyncStatus('syncing', 'Pulling...');
+  const acct = getAccount();
+  if (!acct) return;
+  updateAccountBar('syncing');
   try {
-    const resp = await fetch(url + '?code=' + encodeURIComponent(code));
+    const resp = await fetch(SYNC_URL + '?code=' + encodeURIComponent(acct.key));
     if (resp.ok) {
       const data = await resp.json();
       if (data && data.srs) {
-        // Merge: keep whichever card has more correct answers or later next-review date
         for (const [key, remote] of Object.entries(data.srs)) {
           const local = state.srs[key];
           if (!local || remote.correct > local.correct || (remote.correct === local.correct && remote.next > local.next)) {
@@ -925,77 +929,69 @@ async function cloudPull() {
         localStorage.setItem('fsi-studied', JSON.stringify(state.studied));
         localStorage.setItem('fsi-srs', JSON.stringify(state.srs));
         render();
-        setSyncStatus('connected', 'Synced just now');
-      } else {
-        setSyncStatus('connected', 'No remote data yet');
       }
-    } else if (resp.status === 404) {
-      setSyncStatus('connected', 'No remote data yet');
+      updateAccountBar('connected');
     } else {
-      setSyncStatus('disconnected', 'Sync failed');
+      updateAccountBar('connected');
     }
   } catch (e) {
-    setSyncStatus('disconnected', 'Offline');
+    updateAccountBar('offline');
   }
 }
 
-function setSyncStatus(status, text) {
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  if (!user || !pass) { err.textContent = 'Enter both fields'; return; }
+  if (pass.length < 4) { err.textContent = 'Password too short'; return; }
+  err.textContent = '';
+  const key = await hashCredentials(user, pass);
+  localStorage.setItem('fsi-account', JSON.stringify({ username: user, key }));
+  renderAccountBar();
+  cloudPull();
+}
+
+function doLogout() {
+  localStorage.removeItem('fsi-account');
+  renderAccountBar();
+}
+
+function updateAccountBar(status) {
   const dot = document.getElementById('sync-dot');
   const txt = document.getElementById('sync-status-text');
-  if (dot) { dot.className = 'sync-dot ' + status; }
-  if (txt) { txt.textContent = text; }
+  if (!dot || !txt) return;
+  const labels = { syncing: 'Syncing...', connected: 'Synced', error: 'Sync failed', offline: 'Offline' };
+  dot.className = 'sync-dot ' + (status === 'syncing' ? 'syncing' : status === 'connected' ? 'connected' : 'disconnected');
+  txt.textContent = labels[status] || status;
 }
 
-function showSyncModal() {
-  const existing = document.getElementById('sync-modal');
-  if (existing) existing.remove();
-  const url = localStorage.getItem('fsi-sync-url') || '';
-  const code = localStorage.getItem('fsi-sync-code') || '';
-  const div = document.createElement('div');
-  div.id = 'sync-modal';
-  div.className = 'modal-overlay';
-  div.onclick = e => { if (e.target === div) div.remove(); };
-  div.innerHTML = `<div class="modal">
-    <h3>Cloud Sync Settings</h3>
-    <p>Sync your progress between devices using a Cloudflare Worker. Enter your Worker URL and a secret sync code (same code on all devices).</p>
-    <label>Worker URL</label>
-    <input id="sync-url-input" value="${url}" placeholder="https://fsi-sync.YOUR-NAME.workers.dev">
-    <label>Sync Code (any passphrase you choose)</label>
-    <input id="sync-code-input" value="${code}" placeholder="my-secret-study-code">
-    <div class="modal-actions">
-      <button class="btn" onclick="document.getElementById('sync-modal').remove()">Cancel</button>
-      <button class="btn" onclick="forcePull()">Pull from Cloud</button>
-      <button class="btn primary" onclick="saveSyncSettings()">Save & Sync</button>
-    </div>
-  </div>`;
-  document.body.appendChild(div);
-}
-
-function saveSyncSettings() {
-  const url = document.getElementById('sync-url-input').value.trim().replace(/\/+$/, '');
-  const code = document.getElementById('sync-code-input').value.trim();
-  localStorage.setItem('fsi-sync-url', url);
-  localStorage.setItem('fsi-sync-code', code);
-  document.getElementById('sync-modal').remove();
-  if (url && code) {
-    cloudPush();
+function renderAccountBar() {
+  const bar = document.getElementById('account-bar');
+  if (!bar) return;
+  const acct = getAccount();
+  if (acct) {
+    bar.innerHTML = `
+      <div class="sync-status">
+        <span class="sync-dot connected" id="sync-dot"></span>
+        <span id="sync-status-text">Synced</span>
+      </div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:8px">Logged in as <strong>${acct.username}</strong></div>
+      <button class="btn" style="width:100%;font-size:12px" onclick="doLogout()">Log Out</button>`;
   } else {
-    setSyncStatus('disconnected', 'Not syncing');
+    bar.innerHTML = `
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Log in to sync progress across devices</div>
+      <input id="login-user" placeholder="Username" style="width:100%;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;margin-bottom:6px">
+      <input id="login-pass" type="password" placeholder="Password" style="width:100%;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;margin-bottom:6px"
+        onkeydown="if(event.key==='Enter')doLogin()">
+      <div id="login-error" style="color:var(--red);font-size:11px;min-height:14px"></div>
+      <button class="btn primary" style="width:100%;font-size:12px;margin-top:4px" onclick="doLogin()">Log In / Sign Up</button>`;
   }
 }
 
-function forcePull() {
-  const url = document.getElementById('sync-url-input').value.trim().replace(/\/+$/, '');
-  const code = document.getElementById('sync-code-input').value.trim();
-  localStorage.setItem('fsi-sync-url', url);
-  localStorage.setItem('fsi-sync-code', code);
-  document.getElementById('sync-modal').remove();
-  if (url && code) cloudPull();
-}
-
-// Auto-pull on page load if sync is configured
-if (localStorage.getItem('fsi-sync-url') && localStorage.getItem('fsi-sync-code')) {
-  setSyncStatus('syncing', 'Connecting...');
+// Init account bar and auto-sync on load
+renderAccountBar();
+if (isLoggedIn()) {
   setTimeout(() => cloudPull(), 500);
 }
 
