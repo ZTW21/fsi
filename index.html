@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FSI Standard Chinese - Study Companion</title>
+<title>FSI Language Courses</title>
 <style>
 :root {
   --bg: #0f1117;
@@ -19,862 +19,238 @@
   --orange: #fb923c;
   --yellow: #facc15;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* Layout */
-.app { display: flex; min-height: 100vh; }
-.sidebar { width: 280px; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
-.main { flex: 1; margin-left: 280px; padding: 32px; max-width: 900px; }
-
-/* Sidebar */
-.sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
-.sidebar-header h1 { font-size: 16px; color: var(--accent); }
-.sidebar-header p { font-size: 12px; color: var(--text2); margin-top: 4px; }
-.nav-section { padding: 12px 0; }
-.nav-section-title { padding: 8px 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); font-weight: 600; }
-.nav-item { padding: 8px 20px; cursor: pointer; font-size: 14px; color: var(--text2); display: flex; align-items: center; gap: 8px; transition: all 0.15s; }
-.nav-item:hover { background: var(--surface2); color: var(--text); }
-.nav-item.active { background: var(--accent2); color: white; }
-.nav-item .badge { background: var(--accent); color: white; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: auto; }
-.nav-item .progress-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.nav-item .progress-dot.done { background: var(--green); }
-.nav-item .progress-dot.partial { background: var(--orange); }
-.nav-item .progress-dot.none { background: var(--border); }
-
-/* Tabs */
-.tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
-.tab { padding: 10px 16px; cursor: pointer; font-size: 14px; color: var(--text2); border-bottom: 2px solid transparent; transition: all 0.15s; }
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-/* Section headers */
-h2 { font-size: 24px; margin-bottom: 8px; }
-h3 { font-size: 18px; margin: 20px 0 12px; color: var(--text); }
-.subtitle { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
-
-/* Audio Player */
-.audio-section { margin-bottom: 32px; }
-.unit-group { margin-bottom: 20px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
-.unit-group-header { padding: 12px 16px; background: var(--surface2); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
-.unit-group-header:hover { background: var(--border); }
-.unit-group-body { padding: 8px; }
-.audio-row { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; transition: background 0.15s; }
-.audio-row:hover { background: var(--surface2); }
-.audio-label { font-size: 13px; color: var(--text2); min-width: 120px; }
-.audio-label .tape-type { font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 600; }
-.tape-type.C { background: #1e3a5f; color: #60a5fa; }
-.tape-type.D { background: #3b1f1f; color: #f87171; }
-.tape-type.P { background: #1f3b2f; color: #4ade80; }
-audio { flex: 1; height: 32px; }
-audio::-webkit-media-controls-panel { background: var(--surface2); }
-.speed-control { display: flex; align-items: center; gap: 4px; }
-.speed-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-.speed-btn:hover, .speed-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-/* Flashcards */
-.flashcard-controls { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-.btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 13px; transition: all 0.15s; }
-.btn:hover { background: var(--surface2); }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
-.btn.primary:hover { background: var(--accent2); }
-.btn.green { background: #166534; border-color: #166534; color: white; }
-.btn.red { background: #991b1b; border-color: #991b1b; color: white; }
-
-.flashcard-container { perspective: 1000px; margin: 20px 0; }
-.flashcard { width: 100%; min-height: 280px; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.5s; }
-.flashcard.flipped { transform: rotateY(180deg); }
-.flashcard-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; }
-.flashcard-front { background: var(--surface); }
-.flashcard-back { background: var(--surface2); transform: rotateY(180deg); }
-.flashcard-chinese { font-size: 48px; margin-bottom: 12px; }
-.flashcard-pinyin { font-size: 20px; color: var(--accent); margin-bottom: 8px; }
-.flashcard-english { font-size: 18px; color: var(--text2); text-align: center; }
-.flashcard-meta { font-size: 12px; color: var(--text2); margin-top: 12px; }
-.flashcard-hint { font-size: 13px; color: var(--text2); margin-top: 16px; }
-.card-counter { text-align: center; color: var(--text2); font-size: 14px; margin: 12px 0; }
-
-/* Vocab list */
-.vocab-table { width: 100%; border-collapse: collapse; }
-.vocab-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); }
-.vocab-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
-.vocab-table tr:hover td { background: var(--surface); }
-.vocab-chinese { font-size: 18px; }
-.vocab-pinyin { color: var(--accent); }
-.vocab-type { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--surface2); color: var(--text2); }
-
-/* Stats */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-.stat-value { font-size: 28px; font-weight: 700; color: var(--accent); }
-.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
-
-/* Progress bar */
-.progress-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin: 8px 0; }
-.progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
-
-/* PDF links */
-.pdf-links { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
-.pdf-link { display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); text-decoration: none; font-size: 13px; transition: all 0.15s; }
-.pdf-link:hover { background: var(--surface2); border-color: var(--accent); }
-.pdf-icon { font-size: 18px; }
-
-/* Study guide */
-.study-tip { background: var(--surface); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 14px; }
-.study-tip strong { color: var(--accent); }
-
-/* Grammar box */
-.grammar-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 12px 0; }
-.grammar-box h4 { color: var(--accent); margin-bottom: 8px; font-size: 14px; }
-.grammar-box p { font-size: 14px; color: var(--text2); line-height: 1.6; }
-.grammar-box .example { font-style: italic; color: var(--text); margin: 4px 0; }
-
-/* Dashboard */
-.welcome-card { background: linear-gradient(135deg, #1e3a5f 0%, #2d1b4e 100%); border-radius: 12px; padding: 32px; margin-bottom: 24px; }
-.welcome-card h2 { font-size: 28px; margin-bottom: 8px; }
-.welcome-card p { color: var(--text2); }
-.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
-.module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.15s; }
-.module-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.module-card h3 { font-size: 15px; margin-bottom: 4px; }
-.module-card p { font-size: 12px; color: var(--text2); }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { margin-left: 0; padding: 16px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
 }
 
-/* Quiz mode */
-.quiz-option { padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin: 6px 0; font-size: 15px; transition: all 0.15s; }
-.quiz-option:hover { border-color: var(--accent); background: var(--surface2); }
-.quiz-option.correct { border-color: var(--green); background: #166534; }
-.quiz-option.wrong { border-color: var(--red); background: #991b1b; }
+/* Top bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  gap: 12px;
+}
+.top-bar .username {
+  font-size: 14px;
+  color: var(--text2);
+}
+.top-bar .username strong {
+  color: var(--text);
+}
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+/* Centered container */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
 
-.hidden { display: none !important; }
+/* Login screen */
+.login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+}
+.login-card h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.login-card .subtitle {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.login-card label {
+  font-size: 13px;
+  color: var(--text2);
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+.login-card label:first-of-type {
+  margin-top: 0;
+}
+.login-card input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+.login-card input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.login-error {
+  color: var(--red);
+  font-size: 12px;
+  min-height: 18px;
+  margin-top: 8px;
+}
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.btn:hover {
+  background: var(--surface2);
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  width: 100%;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.btn.primary:hover {
+  background: var(--accent2);
+}
+.btn.small {
+  padding: 6px 14px;
+  font-size: 13px;
+}
 
-/* Sync UI */
-.sync-bar { padding: 12px 20px; border-top: 1px solid var(--border); margin-top: auto; }
-.sync-status { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
-.sync-dot { width: 6px; height: 6px; border-radius: 50%; }
-.sync-dot.connected { background: var(--green); }
-.sync-dot.disconnected { background: var(--red); }
-.sync-dot.syncing { background: var(--yellow); animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* Course selection page */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.page-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+.page-header p {
+  font-size: 16px;
+  color: var(--text2);
+  line-height: 1.5;
+}
 
-/* Modal */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 90%; max-width: 420px; }
-.modal h3 { margin-bottom: 16px; }
-.modal label { font-size: 13px; color: var(--text2); display: block; margin-bottom: 4px; margin-top: 12px; }
-.modal input { width: 100%; padding: 8px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; }
-.modal input:focus { outline: none; border-color: var(--accent); }
-.modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
-.modal p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.courses-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
 
-/* Mobile hamburger */
-.hamburger { display: none; position: fixed; top: 12px; left: 12px; z-index: 20; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; color: var(--text); cursor: pointer; font-size: 18px; }
-@media (max-width: 768px) {
-  .hamburger { display: block; }
-  .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
-  .sidebar.open { transform: translateX(0); }
-  .main { padding-top: 52px; }
+.course-card {
+  border-radius: 12px;
+  padding: 32px;
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-height: 240px;
+}
+.course-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.course-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+.course-card.chinese {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d1b4e 100%);
+}
+.course-card.spanish {
+  background: linear-gradient(135deg, #3b1f1f 0%, #4a2c0a 100%);
+}
+
+.course-card .course-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+}
+.course-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.course-card .course-desc {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.6;
+  flex: 1;
+  margin-bottom: 16px;
+}
+.course-card .course-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text2);
+}
+.course-card .course-meta .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text2);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+  .container {
+    padding: 32px 16px;
+  }
+  .top-bar {
+    padding: 12px 16px;
+  }
+  .page-header h1 {
+    font-size: 26px;
+  }
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
-  <nav class="sidebar" id="sidebar" style="display:flex;flex-direction:column">
-    <div class="sidebar-header">
-      <h1>FSI Standard Chinese</h1>
-      <p>A Modular Approach</p>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title">Overview</div>
-      <div class="nav-item active" data-view="dashboard">Dashboard</div>
-      <div class="nav-item" data-view="study-guide">Study Guide</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title">Resource Module</div>
-      <div class="nav-item" data-view="module-RES-PR"><span class="progress-dot none"></span> Pronunciation & Romanization</div>
-      <div class="nav-item" data-view="module-RES-TD"><span class="progress-dot none"></span> Tones & Drills</div>
-      <div class="nav-item" data-view="module-RES-NUM"><span class="progress-dot none"></span> Numbers</div>
-      <div class="nav-item" data-view="module-RES-CE"><span class="progress-dot none"></span> Classroom Expressions</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title">Core Modules</div>
-      <div class="nav-item" data-view="module-01"><span class="progress-dot none"></span> 01 - Orientation</div>
-      <div class="nav-item" data-view="module-02"><span class="progress-dot none"></span> 02 - Biographical</div>
-      <div class="nav-item" data-view="module-03"><span class="progress-dot none"></span> 03 - Money</div>
-      <div class="nav-item" data-view="module-04"><span class="progress-dot none"></span> 04 - Directions</div>
-      <div class="nav-item" data-view="module-05"><span class="progress-dot none"></span> 05 - Transportation</div>
-      <div class="nav-item" data-view="module-06"><span class="progress-dot none"></span> 06 - Meetings</div>
-      <div class="nav-item" data-view="module-07"><span class="progress-dot none"></span> 07 - Social</div>
-      <div class="nav-item" data-view="module-08"><span class="progress-dot none"></span> 08 - Travel</div>
-      <div class="nav-item" data-view="module-09"><span class="progress-dot none"></span> 09 - Liaison</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-title">Optional Modules</div>
-      <div class="nav-item" data-view="module-CAR"><span class="progress-dot none"></span> Cars</div>
-      <div class="nav-item" data-view="module-HTL"><span class="progress-dot none"></span> Hotels</div>
-      <div class="nav-item" data-view="module-RST"><span class="progress-dot none"></span> Restaurants</div>
-      <div class="nav-item" data-view="module-POT"><span class="progress-dot none"></span> Post & Telecom</div>
-      <div class="nav-item" data-view="module-MBD"><span class="progress-dot none"></span> Mao's Birthday</div>
-      <div class="nav-item" data-view="module-WLF"><span class="progress-dot none"></span> Welfare</div>
-    </div>
-    <div class="sync-bar" id="account-bar">
-      <!-- Filled by JS: login form or logged-in state -->
-    </div>
-  </nav>
 
-  <div class="main" id="main-content">
-    <!-- Content injected by JS -->
-  </div>
-</div>
+<div id="app"></div>
 
 <script>
-// ============================================================
-// DATA: Course vocabulary & structure
-// ============================================================
-const MODULES = {
-  "01": {
-    code: "ORN", name: "Orientation", folder: "Module 01 ORN",
-    units: 4, hasReview: false, description: "Greetings, introductions, and basic courtesy expressions used in first encounters.",
-    pdfs: ["FSI-StandardChinese-Module01ORN-StudentText.pdf", "FSI-StandardChinese-Module01ORN-StudentWorkbook.pdf"],
-    grammar: [
-      { title: "Sentence-final particle 'ma' (吗)", text: "Add 吗 to the end of a statement to turn it into a yes/no question.", example: "你好吗？ Nǐ hǎo ma? — How are you?" },
-      { title: "The verb 'shì' (是)", text: "是 means 'to be' and is used to equate two nouns. Unlike English, it is NOT used with adjectives.", example: "我是美国人。Wǒ shì Měiguó rén. — I am American." },
-      { title: "Personal pronouns", text: "我 (wǒ) I, 你 (nǐ) you, 他/她 (tā) he/she. Add 们 (men) for plural: 我们, 你们, 他们.", example: "他们是中国人。Tāmen shì Zhōngguó rén. — They are Chinese." },
-      { title: "The possessive 'de' (的)", text: "的 placed after a pronoun or noun indicates possession, like English 's or 'of'.", example: "我的名字 wǒ de míngzi — my name" }
-    ],
-    vocab: [
-      ["你好", "nǐ hǎo", "hello", "greeting"],
-      ["你好吗", "nǐ hǎo ma", "how are you?", "greeting"],
-      ["很好", "hěn hǎo", "very good", "response"],
-      ["谢谢", "xièxie", "thank you", "courtesy"],
-      ["不客气", "bú kèqi", "you're welcome", "courtesy"],
-      ["对不起", "duìbuqǐ", "sorry / excuse me", "courtesy"],
-      ["没关系", "méi guānxi", "it doesn't matter / that's OK", "courtesy"],
-      ["再见", "zàijiàn", "goodbye", "greeting"],
-      ["请", "qǐng", "please", "courtesy"],
-      ["我", "wǒ", "I / me", "pronoun"],
-      ["你", "nǐ", "you", "pronoun"],
-      ["他", "tā", "he / him", "pronoun"],
-      ["她", "tā", "she / her", "pronoun"],
-      ["我们", "wǒmen", "we / us", "pronoun"],
-      ["你们", "nǐmen", "you (plural)", "pronoun"],
-      ["他们", "tāmen", "they / them", "pronoun"],
-      ["是", "shì", "to be / am / is / are", "verb"],
-      ["不是", "bú shì", "am not / is not", "verb"],
-      ["的", "de", "possessive particle ('s / of)", "particle"],
-      ["吗", "ma", "question particle", "particle"],
-      ["什么", "shénme", "what", "question"],
-      ["哪", "nǎ", "which", "question"],
-      ["谁", "shéi", "who", "question"],
-      ["先生", "xiānsheng", "Mr. / sir", "title"],
-      ["太太", "tàitai", "Mrs. / madam", "title"],
-      ["小姐", "xiǎojiě", "Miss", "title"],
-      ["同志", "tóngzhì", "comrade", "title"],
-      ["朋友", "péngyou", "friend", "noun"],
-      ["名字", "míngzi", "name", "noun"],
-      ["贵姓", "guìxìng", "what is your (honored) surname?", "courtesy"],
-      ["姓", "xìng", "surname / to be surnamed", "verb"],
-      ["叫", "jiào", "to be called / named", "verb"],
-      ["认识", "rènshi", "to know / to recognize", "verb"],
-      ["高兴", "gāoxìng", "glad / happy", "adj"],
-      ["美国", "Měiguó", "United States", "place"],
-      ["中国", "Zhōngguó", "China", "place"],
-      ["人", "rén", "person / people", "noun"],
-      ["美国人", "Měiguó rén", "American (person)", "noun"],
-      ["中国人", "Zhōngguó rén", "Chinese (person)", "noun"],
-      ["这", "zhè", "this", "demonstrative"],
-      ["那", "nà", "that", "demonstrative"],
-      ["也", "yě", "also / too", "adverb"],
-      ["很", "hěn", "very", "adverb"],
-      ["不", "bù", "not / no", "adverb"],
-      ["呢", "ne", "and you? / what about...?", "particle"],
-      ["请问", "qǐng wèn", "may I ask", "courtesy"],
-      ["欢迎", "huānyíng", "welcome", "verb"]
-    ]
-  },
-  "02": {
-    code: "BIO", name: "Biographical Information", folder: "Module 02 BIO",
-    units: 8, hasReview: true, reviewLabels: ["Review Units 1-4", "Review Units 5-8"],
-    description: "Talking about yourself, family, nationality, language, occupation, and personal background.",
-    pdfs: ["FSI-StandardChinese-Module02BIO-StudentText.pdf", "FSI-StandardChinese-Module02BIO-StudentWorkbook.pdf"],
-    grammar: [
-      { title: "Numbers 1-99", text: "一 (yī) 1, 二 (èr) 2, 三 (sān) 3... 十 (shí) 10. Teens: 十一 (11). Tens: 二十 (20). Combo: 二十一 (21).", example: "我二十五岁。Wǒ èrshíwǔ suì. — I am 25 years old." },
-      { title: "Measure words", text: "Chinese requires a measure word (量词) between a number/demonstrative and a noun. 个 (gè) is the most common general measure word.", example: "三个人 sān gè rén — three people" },
-      { title: "有 (yǒu) — to have", text: "有 means 'to have.' Negated with 没 (méi), not 不.", example: "我没有孩子。Wǒ méi yǒu háizi. — I don't have children." },
-      { title: "几 (jǐ) — how many (small numbers)", text: "Used for asking 'how many' when expecting a small number (under 10).", example: "你有几个孩子？Nǐ yǒu jǐ gè háizi? — How many children do you have?" }
-    ],
-    vocab: [
-      ["哪国人", "nǎ guó rén", "what nationality", "question"],
-      ["说", "shuō", "to speak / to say", "verb"],
-      ["会", "huì", "can / to be able to", "verb"],
-      ["中文", "Zhōngwén", "Chinese (language)", "noun"],
-      ["英文", "Yīngwén", "English (language)", "noun"],
-      ["法文", "Fǎwén", "French (language)", "noun"],
-      ["学", "xué", "to study / to learn", "verb"],
-      ["学生", "xuésheng", "student", "noun"],
-      ["老师", "lǎoshī", "teacher", "noun"],
-      ["工作", "gōngzuò", "work / job / to work", "noun/verb"],
-      ["大使馆", "dàshǐguǎn", "embassy", "noun"],
-      ["家", "jiā", "home / family", "noun"],
-      ["有", "yǒu", "to have / there is", "verb"],
-      ["没有", "méi yǒu", "don't have / there isn't", "verb"],
-      ["几", "jǐ", "how many (small number)", "question"],
-      ["多少", "duōshao", "how many / how much", "question"],
-      ["个", "gè", "general measure word", "measure"],
-      ["岁", "suì", "years old", "measure"],
-      ["多大", "duō dà", "how old", "question"],
-      ["今年", "jīnnián", "this year", "time"],
-      ["孩子", "háizi", "child / children", "noun"],
-      ["儿子", "érzi", "son", "noun"],
-      ["女儿", "nǚ'ér", "daughter", "noun"],
-      ["爸爸", "bàba", "father / dad", "noun"],
-      ["妈妈", "māma", "mother / mom", "noun"],
-      ["哥哥", "gēge", "older brother", "noun"],
-      ["姐姐", "jiějie", "older sister", "noun"],
-      ["弟弟", "dìdi", "younger brother", "noun"],
-      ["妹妹", "mèimei", "younger sister", "noun"],
-      ["丈夫", "zhàngfu", "husband", "noun"],
-      ["妻子", "qīzi", "wife", "noun"],
-      ["爱人", "àiren", "spouse (PRC usage)", "noun"],
-      ["结婚", "jié hūn", "to marry / married", "verb"],
-      ["还没有", "hái méi yǒu", "not yet", "phrase"],
-      ["在", "zài", "at / in / to be at", "prep/verb"],
-      ["哪儿", "nǎr", "where", "question"],
-      ["这儿", "zhèr", "here", "demonstrative"],
-      ["那儿", "nàr", "there", "demonstrative"],
-      ["住", "zhù", "to live / to reside", "verb"],
-      ["做", "zuò", "to do / to make", "verb"],
-      ["英国", "Yīngguó", "England / Britain", "place"],
-      ["法国", "Fǎguó", "France", "place"],
-      ["德国", "Déguó", "Germany", "place"],
-      ["日本", "Rìběn", "Japan", "place"],
-      ["北京", "Běijīng", "Beijing", "place"],
-      ["和", "hé", "and", "conjunction"],
-      ["都", "dōu", "all / both", "adverb"],
-      ["还", "hái", "also / still / in addition", "adverb"],
-      ["能", "néng", "can / to be able to", "verb"],
-      ["一点儿", "yìdiǎnr", "a little bit", "phrase"],
-      ["太...了", "tài...le", "too... (excessive)", "pattern"]
-    ]
-  },
-  "03": {
-    code: "MON", name: "Money", folder: "Module 03 MON",
-    units: 6, hasReview: true, reviewLabels: ["Review Units 1-3", "Review Units 4-6"],
-    description: "Numbers, counting, prices, shopping, and handling money in Chinese currency.",
-    pdfs: ["FSI-StandardChinese-Module03MON-StudentText.pdf", "FSI-StandardChinese-Module03MON-StudentWorkbook.pdf"],
-    grammar: [
-      { title: "Large numbers", text: "百 (bǎi) = hundred, 千 (qiān) = thousand, 万 (wàn) = ten thousand. Note: Chinese groups by 10,000 (万) not 1,000.", example: "三千五百 sān qiān wǔ bǎi — 3,500" },
-      { title: "Chinese currency", text: "元/块 (yuán/kuài) = dollar, 角/毛 (jiǎo/máo) = dime, 分 (fēn) = cent. 块 and 毛 are colloquial.", example: "十五块三毛 shíwǔ kuài sān máo — ¥15.30" },
-      { title: "The 想 (xiǎng) pattern", text: "想 means 'want to' or 'would like to,' used before another verb.", example: "我想买这个。Wǒ xiǎng mǎi zhège. — I want to buy this." },
-      { title: "太...了 (tài...le)", text: "Pattern meaning 'too (much).' The adjective goes between 太 and 了.", example: "太贵了！Tài guì le! — Too expensive!" }
-    ],
-    vocab: [
-      ["钱", "qián", "money", "noun"],
-      ["块", "kuài", "yuan (colloquial) / dollar", "measure"],
-      ["毛", "máo", "dime (colloquial) / 10 cents", "measure"],
-      ["分", "fēn", "cent", "measure"],
-      ["元", "yuán", "yuan (formal)", "measure"],
-      ["人民币", "rénmínbì", "RMB / Chinese currency", "noun"],
-      ["美元", "Měiyuán", "US dollar", "noun"],
-      ["多少钱", "duōshao qián", "how much money?", "question"],
-      ["买", "mǎi", "to buy", "verb"],
-      ["卖", "mài", "to sell", "verb"],
-      ["要", "yào", "to want / to need", "verb"],
-      ["想", "xiǎng", "to want to / would like to", "verb"],
-      ["给", "gěi", "to give", "verb"],
-      ["找", "zhǎo", "to give change / to look for", "verb"],
-      ["换", "huàn", "to exchange / to change", "verb"],
-      ["贵", "guì", "expensive", "adj"],
-      ["便宜", "piányi", "cheap / inexpensive", "adj"],
-      ["百", "bǎi", "hundred", "number"],
-      ["千", "qiān", "thousand", "number"],
-      ["万", "wàn", "ten thousand", "number"],
-      ["零", "líng", "zero", "number"],
-      ["两", "liǎng", "two (with measure words)", "number"],
-      ["半", "bàn", "half", "number"],
-      ["东西", "dōngxi", "thing / stuff", "noun"],
-      ["一共", "yígòng", "altogether / in total", "adverb"],
-      ["可以", "kěyǐ", "can / may / OK", "verb"],
-      ["行", "xíng", "OK / will do", "verb"],
-      ["对", "duì", "correct / right", "adj"],
-      ["错", "cuò", "wrong / incorrect", "adj"],
-      ["张", "zhāng", "measure word for flat objects", "measure"],
-      ["本", "běn", "measure word for books", "measure"],
-      ["支", "zhī", "measure word for pens", "measure"],
-      ["条", "tiáo", "measure word for long thin things", "measure"],
-      ["件", "jiàn", "measure word for clothing/matters", "measure"],
-      ["书", "shū", "book", "noun"],
-      ["报纸", "bàozhǐ", "newspaper", "noun"],
-      ["地图", "dìtú", "map", "noun"],
-      ["邮票", "yóupiào", "stamp", "noun"],
-      ["信", "xìn", "letter", "noun"],
-      ["笔", "bǐ", "pen", "noun"]
-    ]
-  },
-  "04": {
-    code: "DIR", name: "Directions", folder: "Module 04 DIR",
-    units: 5, hasReview: true, reviewLabels: ["Review Units 1-3", "Review Units 4-5"],
-    description: "Asking for and giving directions, locations, and describing positions.",
-    pdfs: ["FSI-StandardChinese-Module04DIR-StudentText.pdf", "FSI-StandardChinese-Module04DIR-StudentWorkbook.pdf"],
-    grammar: [
-      { title: "Location words", text: "上 (shàng) on/above, 下 (xià) under/below, 前 (qián) front, 后 (hòu) back, 左 (zuǒ) left, 右 (yòu) right, 里 (lǐ) inside, 外 (wài) outside.", example: "银行在邮局旁边。Yínháng zài yóujú pángbiān. — The bank is next to the post office." },
-      { title: "在 (zài) for location", text: "在 + place means 'at/in (a place).' Can be a verb ('to be at') or a preposition.", example: "他在哪儿？Tā zài nǎr? — Where is he?" },
-      { title: "Verb + 到 (dào)", text: "到 means 'to arrive at / to reach.' Often combined with other verbs.", example: "走到前边 zǒu dào qiánbiān — walk to the front" },
-      { title: "离 (lí) — distance from", text: "离 expresses distance between two places.", example: "这儿离饭店远不远？Zhèr lí fàndiàn yuǎn bu yuǎn? — Is it far from here to the hotel?" }
-    ],
-    vocab: [
-      ["去", "qù", "to go", "verb"],
-      ["来", "lái", "to come", "verb"],
-      ["走", "zǒu", "to walk / to go", "verb"],
-      ["到", "dào", "to arrive / to reach", "verb"],
-      ["往", "wǎng", "toward / in the direction of", "prep"],
-      ["从", "cóng", "from", "prep"],
-      ["离", "lí", "from / distance from", "prep"],
-      ["远", "yuǎn", "far", "adj"],
-      ["近", "jìn", "near / close", "adj"],
-      ["左", "zuǒ", "left", "direction"],
-      ["右", "yòu", "right", "direction"],
-      ["前边", "qiánbiān", "in front / ahead", "direction"],
-      ["后边", "hòubiān", "behind / in back", "direction"],
-      ["上边", "shàngbiān", "above / on top", "direction"],
-      ["下边", "xiàbiān", "below / underneath", "direction"],
-      ["里边", "lǐbiān", "inside", "direction"],
-      ["外边", "wàibiān", "outside", "direction"],
-      ["旁边", "pángbiān", "beside / next to", "direction"],
-      ["对面", "duìmiàn", "opposite / across from", "direction"],
-      ["中间", "zhōngjiān", "middle / between", "direction"],
-      ["拐", "guǎi", "to turn", "verb"],
-      ["过", "guò", "to cross / to pass", "verb"],
-      ["路", "lù", "road / street", "noun"],
-      ["街", "jiē", "street", "noun"],
-      ["路口", "lùkǒu", "intersection", "noun"],
-      ["红绿灯", "hónglǜdēng", "traffic light", "noun"],
-      ["地方", "dìfang", "place", "noun"],
-      ["银行", "yínháng", "bank", "noun"],
-      ["邮局", "yóujú", "post office", "noun"],
-      ["医院", "yīyuàn", "hospital", "noun"],
-      ["饭店", "fàndiàn", "hotel / restaurant", "noun"],
-      ["商店", "shāngdiàn", "store / shop", "noun"],
-      ["书店", "shūdiàn", "bookstore", "noun"],
-      ["学校", "xuéxiào", "school", "noun"],
-      ["公园", "gōngyuán", "park", "noun"],
-      ["怎么走", "zěnme zǒu", "how to get there", "question"],
-      ["知道", "zhīdào", "to know", "verb"],
-      ["看", "kàn", "to look / to see", "verb"],
-      ["找到", "zhǎo dào", "to find", "verb"],
-      ["一直", "yìzhí", "straight ahead", "adverb"]
-    ]
-  },
-  "05": {
-    code: "TRN", name: "Transportation", folder: "Module 05 TRN",
-    units: 8, hasReview: true, reviewLabels: ["Review Units 1-4", "Review Units 5-8"],
-    description: "Taking taxis, buses, trains, and making travel arrangements.",
-    pdfs: ["FSI-StandardChinese-Module05TRN-StudentText.pdf", "FSI-StandardChinese-Module05TRN-StudentWorkbook.pdf"],
-    grammar: [
-      { title: "Time expressions", text: "Time words come BEFORE the verb in Chinese. Order: Subject + Time + Verb.", example: "我明天去。Wǒ míngtiān qù. — I'm going tomorrow." },
-      { title: "了 (le) for completed action", text: "了 after a verb indicates the action is completed (perfective aspect).", example: "我买了票。Wǒ mǎi le piào. — I bought a ticket." },
-      { title: "Duration of time", text: "Duration expressions go AFTER the verb.", example: "坐两个小时 zuò liǎng gè xiǎoshí — ride for two hours" },
-      { title: "从...到... (cóng...dào...)", text: "Pattern meaning 'from...to...' for both places and times.", example: "从北京到上海 cóng Běijīng dào Shànghǎi — from Beijing to Shanghai" }
-    ],
-    vocab: [
-      ["车", "chē", "vehicle / car", "noun"],
-      ["出租车", "chūzū chē", "taxi", "noun"],
-      ["公共汽车", "gōnggòng qìchē", "bus", "noun"],
-      ["火车", "huǒchē", "train", "noun"],
-      ["飞机", "fēijī", "airplane", "noun"],
-      ["自行车", "zìxíngchē", "bicycle", "noun"],
-      ["坐", "zuò", "to sit / to ride (a vehicle)", "verb"],
-      ["开", "kāi", "to drive / to open", "verb"],
-      ["停", "tíng", "to stop", "verb"],
-      ["上车", "shàng chē", "to get on (a vehicle)", "verb"],
-      ["下车", "xià chē", "to get off (a vehicle)", "verb"],
-      ["票", "piào", "ticket", "noun"],
-      ["站", "zhàn", "station / stop", "noun"],
-      ["火车站", "huǒchē zhàn", "train station", "noun"],
-      ["机场", "jīchǎng", "airport", "noun"],
-      ["快", "kuài", "fast / quick", "adj"],
-      ["慢", "màn", "slow", "adj"],
-      ["小时", "xiǎoshí", "hour", "time"],
-      ["分钟", "fēnzhōng", "minute", "time"],
-      ["点", "diǎn", "o'clock", "time"],
-      ["半", "bàn", "half", "time"],
-      ["刻", "kè", "quarter (of an hour)", "time"],
-      ["现在", "xiànzài", "now", "time"],
-      ["今天", "jīntiān", "today", "time"],
-      ["明天", "míngtiān", "tomorrow", "time"],
-      ["昨天", "zuótiān", "yesterday", "time"],
-      ["早上", "zǎoshang", "morning", "time"],
-      ["下午", "xiàwǔ", "afternoon", "time"],
-      ["晚上", "wǎnshang", "evening", "time"],
-      ["时候", "shíhou", "time / moment", "time"],
-      ["什么时候", "shénme shíhou", "when", "question"],
-      ["了", "le", "completed action particle", "particle"],
-      ["过", "guo", "experiential particle (ever)", "particle"],
-      ["等", "děng", "to wait", "verb"],
-      ["送", "sòng", "to deliver / to see off", "verb"],
-      ["接", "jiē", "to pick up / to meet", "verb"],
-      ["路", "lù", "route number / road", "noun"],
-      ["先", "xiān", "first", "adverb"],
-      ["然后", "ránhòu", "then / after that", "adverb"],
-      ["上海", "Shànghǎi", "Shanghai", "place"]
-    ]
-  },
-  "06": {
-    code: "MTG", name: "Meetings", folder: "Module 06 MTG",
-    units: 8, hasReview: true, reviewLabels: ["Review Units 1-4", "Review Units 5-8"],
-    description: "Scheduling appointments, formal meetings, telephone calls, and business interactions.",
-    pdfs: ["FSI-StandardChinese-Module06MTG-StudentText.pdf", "FSI-StandardChinese-Module06MTG-StudentWorkbook.pdf"],
-    grammar: [
-      { title: "Making appointments", text: "Use 约 (yuē) to make appointments. Time word + 见 (jiàn) for 'meet at (time).'", example: "我们明天下午三点见。Wǒmen míngtiān xiàwǔ sān diǎn jiàn. — Let's meet tomorrow at 3 PM." },
-      { title: "The 把 (bǎ) construction", text: "把 moves the object before the verb to emphasize what happens to it. S + 把 + Object + Verb + Complement.", example: "请把门关上。Qǐng bǎ mén guān shàng. — Please close the door." },
-      { title: "Resultative complements", text: "A second verb/adjective after the main verb shows the result of the action.", example: "听懂 tīng dǒng — to listen and understand" },
-      { title: "能 vs 会 vs 可以", text: "能 = physical ability/permission, 会 = learned ability, 可以 = permission/possibility.", example: "你会说中文吗？Nǐ huì shuō Zhōngwén ma? — Can you speak Chinese?" }
-    ],
-    vocab: [
-      ["见", "jiàn", "to see / to meet", "verb"],
-      ["见面", "jiàn miàn", "to meet (face to face)", "verb"],
-      ["约", "yuē", "to make an appointment", "verb"],
-      ["打电话", "dǎ diànhuà", "to make a phone call", "verb"],
-      ["电话", "diànhuà", "telephone", "noun"],
-      ["号码", "hàomǎ", "number (phone, etc.)", "noun"],
-      ["忙", "máng", "busy", "adj"],
-      ["有空", "yǒu kòng", "to have free time", "verb"],
-      ["方便", "fāngbiàn", "convenient", "adj"],
-      ["时间", "shíjiān", "time", "noun"],
-      ["上午", "shàngwǔ", "morning (formal)", "time"],
-      ["中午", "zhōngwǔ", "noon", "time"],
-      ["星期", "xīngqī", "week", "time"],
-      ["星期一", "xīngqī yī", "Monday", "time"],
-      ["星期二", "xīngqī èr", "Tuesday", "time"],
-      ["星期三", "xīngqī sān", "Wednesday", "time"],
-      ["星期四", "xīngqī sì", "Thursday", "time"],
-      ["星期五", "xīngqī wǔ", "Friday", "time"],
-      ["星期六", "xīngqī liù", "Saturday", "time"],
-      ["星期天", "xīngqī tiān", "Sunday", "time"],
-      ["月", "yuè", "month", "time"],
-      ["号", "hào", "date (of month)", "time"],
-      ["年", "nián", "year", "time"],
-      ["请", "qǐng", "to invite / please", "verb"],
-      ["等一下", "děng yíxià", "wait a moment", "phrase"],
-      ["介绍", "jièshào", "to introduce", "verb"],
-      ["开会", "kāi huì", "to have a meeting", "verb"],
-      ["谈", "tán", "to talk / to discuss", "verb"],
-      ["问题", "wèntí", "question / problem", "noun"],
-      ["事情", "shìqing", "matter / thing / affair", "noun"],
-      ["办公室", "bàngōngshì", "office", "noun"],
-      ["门", "mén", "door / gate", "noun"],
-      ["进", "jìn", "to enter", "verb"],
-      ["出", "chū", "to exit / to go out", "verb"],
-      ["回", "huí", "to return", "verb"],
-      ["告诉", "gàosu", "to tell", "verb"],
-      ["听", "tīng", "to listen", "verb"],
-      ["懂", "dǒng", "to understand", "verb"],
-      ["把", "bǎ", "object-marking preposition", "particle"],
-      ["已经", "yǐjīng", "already", "adverb"]
-    ]
-  },
-  "07": {
-    code: "SOC", name: "Social", folder: "Module 07 SOC",
-    units: 8, hasReview: true, reviewLabels: ["Review Units 1-4", "Review Units 5-8"],
-    tapeFormat: "simple",
-    description: "Social situations, invitations, dining etiquette, and polite conversation.",
-    pdfs: ["FSI-StandardChinese-Module07SOC-StudentTextAndWorkbook.pdf"],
-    grammar: [
-      { title: "Comparison with 比 (bǐ)", text: "A 比 B + adjective. Means 'A is more [adj] than B.'", example: "今天比昨天冷。Jīntiān bǐ zuótiān lěng. — Today is colder than yesterday." },
-      { title: "Verb + 过 (guo) — experience", text: "过 after a verb indicates having the experience of doing something.", example: "我吃过北京烤鸭。Wǒ chī guo Běijīng kǎoyā. — I've eaten Peking duck." },
-      { title: "被 (bèi) — passive", text: "被 marks the passive voice. Subject + 被 + agent + verb.", example: "菜被他吃了。Cài bèi tā chī le. — The food was eaten by him." }
-    ],
-    vocab: [
-      ["请客", "qǐng kè", "to treat (to a meal)", "verb"],
-      ["吃饭", "chī fàn", "to eat (a meal)", "verb"],
-      ["喝", "hē", "to drink", "verb"],
-      ["吃", "chī", "to eat", "verb"],
-      ["菜", "cài", "dish / vegetable", "noun"],
-      ["饭", "fàn", "rice / meal", "noun"],
-      ["茶", "chá", "tea", "noun"],
-      ["酒", "jiǔ", "alcohol / wine", "noun"],
-      ["啤酒", "píjiǔ", "beer", "noun"],
-      ["水", "shuǐ", "water", "noun"],
-      ["肉", "ròu", "meat", "noun"],
-      ["鱼", "yú", "fish", "noun"],
-      ["鸡", "jī", "chicken", "noun"],
-      ["米饭", "mǐfàn", "cooked rice", "noun"],
-      ["面条", "miàntiáo", "noodles", "noun"],
-      ["筷子", "kuàizi", "chopsticks", "noun"],
-      ["杯", "bēi", "cup / glass (measure word)", "measure"],
-      ["碗", "wǎn", "bowl (measure word)", "measure"],
-      ["盘", "pán", "plate / dish (measure word)", "measure"],
-      ["好吃", "hǎo chī", "delicious", "adj"],
-      ["饿", "è", "hungry", "adj"],
-      ["渴", "kě", "thirsty", "adj"],
-      ["饱", "bǎo", "full (from eating)", "adj"],
-      ["够", "gòu", "enough", "adj"],
-      ["干杯", "gān bēi", "cheers / bottoms up", "phrase"],
-      ["比", "bǐ", "compared to", "prep"],
-      ["最", "zuì", "most / -est (superlative)", "adverb"],
-      ["更", "gèng", "even more", "adverb"],
-      ["点菜", "diǎn cài", "to order food", "verb"],
-      ["服务员", "fúwùyuán", "waiter / attendant", "noun"],
-      ["餐厅", "cāntīng", "restaurant / dining hall", "noun"],
-      ["味道", "wèidao", "flavor / taste", "noun"],
-      ["辣", "là", "spicy", "adj"],
-      ["甜", "tián", "sweet", "adj"],
-      ["咸", "xián", "salty", "adj"],
-      ["热", "rè", "hot", "adj"],
-      ["冷", "lěng", "cold", "adj"],
-      ["欢迎光临", "huānyíng guānglín", "welcome (to a business)", "phrase"],
-      ["随便", "suíbiàn", "as you wish / casual", "adj"],
-      ["客气", "kèqi", "polite / courteous", "adj"]
-    ]
-  },
-  "08": {
-    code: "TVL", name: "Travel", folder: "Module 08 TVL",
-    units: 8, hasReview: true, reviewLabels: ["Review Units 1-4", "Review Units 5-8"],
-    tapeFormat: "simple",
-    description: "Making travel plans, booking hotels, sightseeing, and describing places.",
-    pdfs: ["FSI-StandardChinese-Module08TVL-StudentTextAndWorkbook.pdf"],
-    grammar: [
-      { title: "正在 (zhèngzài) — ongoing action", text: "正在 + verb indicates an action in progress (like English -ing).", example: "他正在看书。Tā zhèngzài kàn shū. — He is reading." },
-      { title: "要...了 (yào...le) — about to", text: "Indicates something is about to happen.", example: "飞机要起飞了。Fēijī yào qǐfēi le. — The plane is about to take off." },
-      { title: "Verb + 得 (de) — degree complement", text: "得 after a verb introduces a complement describing how the action is performed.", example: "他说得很好。Tā shuō de hěn hǎo. — He speaks very well." }
-    ],
-    vocab: [
-      ["旅行", "lǚxíng", "to travel / trip", "verb/noun"],
-      ["旅馆", "lǚguǎn", "hotel / inn", "noun"],
-      ["房间", "fángjiān", "room", "noun"],
-      ["订", "dìng", "to book / to reserve", "verb"],
-      ["住", "zhù", "to stay / to live", "verb"],
-      ["天", "tiān", "day", "time"],
-      ["晚", "wǎn", "night / evening / late", "time/adj"],
-      ["护照", "hùzhào", "passport", "noun"],
-      ["签证", "qiānzhèng", "visa", "noun"],
-      ["行李", "xíngli", "luggage", "noun"],
-      ["箱子", "xiāngzi", "suitcase / box", "noun"],
-      ["风景", "fēngjǐng", "scenery", "noun"],
-      ["长城", "Chángchéng", "Great Wall", "place"],
-      ["故宫", "Gùgōng", "Forbidden City", "place"],
-      ["天安门", "Tiān'ānmén", "Tiananmen", "place"],
-      ["参观", "cānguān", "to visit (a place)", "verb"],
-      ["游览", "yóulǎn", "to tour / sightsee", "verb"],
-      ["照相", "zhào xiàng", "to take a photo", "verb"],
-      ["漂亮", "piàoliang", "beautiful / pretty", "adj"],
-      ["有名", "yǒumíng", "famous", "adj"],
-      ["好玩", "hǎo wán", "fun / interesting", "adj"],
-      ["地方", "dìfang", "place", "noun"],
-      ["准备", "zhǔnbèi", "to prepare", "verb"],
-      ["出发", "chūfā", "to depart / set out", "verb"],
-      ["到达", "dàodá", "to arrive", "verb"],
-      ["正在", "zhèngzài", "in the process of (doing)", "adverb"],
-      ["得", "de", "degree complement marker", "particle"],
-      ["带", "dài", "to bring / to carry", "verb"],
-      ["天气", "tiānqì", "weather", "noun"],
-      ["下雨", "xià yǔ", "to rain", "verb"],
-      ["晴天", "qíngtiān", "sunny day", "noun"],
-      ["暖和", "nuǎnhuo", "warm", "adj"],
-      ["凉快", "liángkuai", "cool (temperature)", "adj"]
-    ]
-  },
-  "09": {
-    code: "LIC", name: "Liaison & Communications", folder: "Module 09 LIC",
-    units: 8, hasReview: true, reviewLabels: ["Review Units 1-3", "Review Units 4-6", "Review Units 7-8"],
-    tapeFormat: "simple",
-    description: "Official communications, telephone etiquette, messages, and formal correspondence.",
-    pdfs: [],
-    grammar: [
-      { title: "如果...就... (rúguǒ...jiù...)", text: "If...then... conditional pattern.", example: "如果你有空，就来吧。Rúguǒ nǐ yǒu kòng, jiù lái ba. — If you're free, then come." },
-      { title: "虽然...但是... (suīrán...dànshì...)", text: "Although...but... concessive pattern.", example: "虽然很远，但是很漂亮。Suīrán hěn yuǎn, dànshì hěn piàoliang. — Although it's far, it's beautiful." },
-      { title: "越来越 (yuè lái yuè)", text: "More and more + adjective.", example: "他的中文越来越好。Tā de Zhōngwén yuè lái yuè hǎo. — His Chinese is getting better and better." }
-    ],
-    vocab: [
-      ["联系", "liánxì", "to contact", "verb"],
-      ["通知", "tōngzhī", "to notify / notice", "verb/noun"],
-      ["安排", "ānpái", "to arrange", "verb"],
-      ["打算", "dǎsuàn", "to plan / to intend", "verb"],
-      ["希望", "xīwàng", "to hope / hope", "verb/noun"],
-      ["留", "liú", "to leave (a message) / to stay", "verb"],
-      ["留言", "liú yán", "to leave a message", "verb"],
-      ["转告", "zhuǎn gào", "to pass on (a message)", "verb"],
-      ["传真", "chuánzhēn", "fax", "noun"],
-      ["信封", "xìnfēng", "envelope", "noun"],
-      ["地址", "dìzhǐ", "address", "noun"],
-      ["邮寄", "yóujì", "to mail", "verb"],
-      ["寄", "jì", "to send (mail)", "verb"],
-      ["收到", "shōu dào", "to receive", "verb"],
-      ["回信", "huí xìn", "to reply (letter)", "verb"],
-      ["同意", "tóngyì", "to agree", "verb"],
-      ["决定", "juédìng", "to decide / decision", "verb/noun"],
-      ["必须", "bìxū", "must / have to", "adverb"],
-      ["应该", "yīnggāi", "should / ought to", "verb"],
-      ["可能", "kěnéng", "possible / possibly", "adj/adverb"],
-      ["如果", "rúguǒ", "if", "conjunction"],
-      ["虽然", "suīrán", "although", "conjunction"],
-      ["但是", "dànshì", "but / however", "conjunction"],
-      ["因为", "yīnwèi", "because", "conjunction"],
-      ["所以", "suǒyǐ", "therefore / so", "conjunction"],
-      ["而且", "érqiě", "moreover / and also", "conjunction"],
-      ["或者", "huòzhě", "or (statement)", "conjunction"],
-      ["还是", "háishi", "or (question)", "conjunction"],
-      ["越来越", "yuè lái yuè", "more and more", "pattern"],
-      ["关于", "guānyú", "regarding / about", "prep"],
-      ["重要", "zhòngyào", "important", "adj"],
-      ["清楚", "qīngchu", "clear / clearly", "adj"],
-      ["麻烦", "máfan", "troublesome / to bother", "adj/verb"],
-      ["帮忙", "bāng máng", "to help", "verb"],
-      ["帮", "bāng", "to help", "verb"]
-    ]
-  }
-};
-
-const OPTIONAL_MODULES = {
-  CAR: { name: "Cars", folder: "Optional Modules", prefix: "CAR", units: 2,
-    pdf: "FSI-StandardChinese-OptionalModuleCAR-StudentText.pdf",
-    vocab: [
-      ["汽车", "qìchē", "car / automobile", "noun"],
-      ["开车", "kāi chē", "to drive", "verb"],
-      ["司机", "sījī", "driver", "noun"],
-      ["加油", "jiā yóu", "to refuel / go for it!", "verb"],
-      ["加油站", "jiāyóu zhàn", "gas station", "noun"],
-      ["修理", "xiūlǐ", "to repair", "verb"],
-      ["停车", "tíng chē", "to park", "verb"],
-      ["停车场", "tíngchē chǎng", "parking lot", "noun"],
-      ["驾照", "jiàzhào", "driver's license", "noun"],
-      ["公路", "gōnglù", "highway", "noun"],
-      ["油", "yóu", "gasoline / oil", "noun"],
-      ["轮胎", "lúntāi", "tire", "noun"]
-    ]
-  },
-  HTL: { name: "Hotels", folder: "Optional Modules", prefix: "HTL", units: 2,
-    pdf: "FSI-StandardChinese-OptionalModuleHTL-StudentText.pdf",
-    vocab: [
-      ["宾馆", "bīnguǎn", "hotel (upscale)", "noun"],
-      ["前台", "qiántái", "front desk", "noun"],
-      ["登记", "dēngjì", "to register / check in", "verb"],
-      ["退房", "tuì fáng", "to check out", "verb"],
-      ["钥匙", "yàoshi", "key", "noun"],
-      ["电梯", "diàntī", "elevator", "noun"],
-      ["楼", "lóu", "floor / building", "noun"],
-      ["空调", "kōngtiáo", "air conditioning", "noun"],
-      ["洗澡", "xǐ zǎo", "to take a bath/shower", "verb"],
-      ["毛巾", "máojīn", "towel", "noun"],
-      ["打扫", "dǎsǎo", "to clean", "verb"],
-      ["服务", "fúwù", "service", "noun"]
-    ]
-  },
-  RST: { name: "Restaurants", folder: "Optional Modules", prefix: "RST", units: 4,
-    pdf: "FSI-StandardChinese-OptionalModuleRST-StudentText.pdf",
-    vocab: [
-      ["菜单", "càidān", "menu", "noun"],
-      ["点菜", "diǎn cài", "to order (food)", "verb"],
-      ["炒", "chǎo", "to stir-fry", "verb"],
-      ["蒸", "zhēng", "to steam", "verb"],
-      ["烤", "kǎo", "to roast / to grill", "verb"],
-      ["煮", "zhǔ", "to boil", "verb"],
-      ["豆腐", "dòufu", "tofu", "noun"],
-      ["青菜", "qīngcài", "green vegetables", "noun"],
-      ["汤", "tāng", "soup", "noun"],
-      ["饺子", "jiǎozi", "dumplings", "noun"],
-      ["包子", "bāozi", "steamed buns", "noun"],
-      ["买单", "mǎi dān", "to pay the bill", "verb"],
-      ["小费", "xiǎofèi", "tip / gratuity", "noun"],
-      ["素菜", "sùcài", "vegetarian dish", "noun"],
-      ["荤菜", "hūncài", "meat dish", "noun"]
-    ]
-  },
-  POT: { name: "Post & Telecommunications", folder: "Optional Modules", prefix: "POT", units: 2,
-    pdf: "FSI-StandardChinese-OptionalModulePOT-StudentText.pdf",
-    vocab: [
-      ["邮局", "yóujú", "post office", "noun"],
-      ["寄信", "jì xìn", "to mail a letter", "verb"],
-      ["包裹", "bāoguǒ", "package / parcel", "noun"],
-      ["航空", "hángkōng", "airmail", "noun"],
-      ["挂号", "guàhào", "registered (mail)", "verb"],
-      ["电报", "diànbào", "telegram", "noun"],
-      ["国际", "guójì", "international", "adj"],
-      ["国内", "guónèi", "domestic", "adj"],
-      ["打长途", "dǎ chángtú", "to make a long distance call", "verb"],
-      ["总机", "zǒngjī", "switchboard / operator", "noun"]
-    ]
-  },
-  MBD: { name: "Mao's Birthday", folder: "Optional Modules", prefix: "MBD", units: 6,
-    pdf: "FSI-StandardChinese-OptionalModuleMBD-StudentText.pdf",
-    vocab: [
-      ["生日", "shēngrì", "birthday", "noun"],
-      ["祝贺", "zhùhè", "to congratulate", "verb"],
-      ["庆祝", "qìngzhù", "to celebrate", "verb"],
-      ["纪念", "jìniàn", "to commemorate", "verb"],
-      ["历史", "lìshǐ", "history", "noun"],
-      ["文化", "wénhuà", "culture", "noun"],
-      ["政治", "zhèngzhì", "politics", "noun"],
-      ["革命", "gémìng", "revolution", "noun"],
-      ["社会", "shèhuì", "society", "noun"],
-      ["人民", "rénmín", "people (the people)", "noun"],
-      ["主席", "zhǔxí", "chairman", "noun"],
-      ["伟大", "wěidà", "great / mighty", "adj"]
-    ]
-  },
-  WLF: { name: "Welfare", folder: "Optional Modules", prefix: "WLF", units: 6,
-    pdf: "FSI-StandardChinese-OptionalModuleWLF-StudentText.pdf",
-    vocab: [
-      ["身体", "shēntǐ", "body / health", "noun"],
-      ["健康", "jiànkāng", "health / healthy", "noun/adj"],
-      ["看病", "kàn bìng", "to see a doctor", "verb"],
-      ["病", "bìng", "sick / illness", "noun/adj"],
-      ["医生", "yīshēng", "doctor", "noun"],
-      ["药", "yào", "medicine", "noun"],
-      ["头疼", "tóu téng", "headache", "noun"],
-      ["发烧", "fā shāo", "to have a fever", "verb"],
-      ["感冒", "gǎnmào", "cold (illness)", "noun"],
-      ["休息", "xiūxi", "to rest", "verb"],
-      ["舒服", "shūfu", "comfortable", "adj"],
-      ["不舒服", "bù shūfu", "uncomfortable / unwell", "adj"]
-    ]
-  }
-};
-
-const RESOURCE_SECTIONS = {
-  PR: { name: "Pronunciation & Romanization", tapePrefix: "PandR", tapeCount: 6 },
-  TD: { name: "Tones & Drills", tapePrefix: "TandD", tapeCount: 4 },
-  NUM: { name: "Numbers", tapePrefix: "NUM", tapeCount: 6 },
-  CE: { name: "Classroom Expressions", tapePrefix: "CE", tapeCount: 2 }
-};
-
-// ============================================================
-// STATE
-// ============================================================
-let state = {
-  currentView: 'dashboard',
-  cardIndex: 0,
-  flipped: false,
-  quizMode: false,
-  playbackRate: 1.0,
-  studied: JSON.parse(localStorage.getItem('fsi-studied') || '{}'),
-  srs: JSON.parse(localStorage.getItem('fsi-srs') || '{}')
-};
-
-function saveState() {
-  localStorage.setItem('fsi-studied', JSON.stringify(state.studied));
-  localStorage.setItem('fsi-srs', JSON.stringify(state.srs));
-  debouncedSync();
-}
-
-// ============================================================
-// ACCOUNT & CLOUD SYNC
-// ============================================================
-const SYNC_URL = 'https://fsi-sync.zackwilson21.workers.dev';
-let syncTimer = null;
-
+// --- Auth ---
 async function hashCredentials(username, password) {
   const data = new TextEncoder().encode(username.toLowerCase().trim() + ':' + password);
   const hash = await crypto.subtle.digest('SHA-256', data);
@@ -886,817 +262,110 @@ function getAccount() {
   return acct ? JSON.parse(acct) : null;
 }
 
-function isLoggedIn() { return !!getAccount(); }
-
-function debouncedSync() {
-  if (!isLoggedIn()) return;
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(() => cloudPush(), 2000);
+function isLoggedIn() {
+  return !!getAccount();
 }
 
-async function cloudPush() {
-  const acct = getAccount();
-  if (!acct) return;
-  updateAccountBar('syncing');
-  try {
-    const resp = await fetch(SYNC_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: acct.key, srs: state.srs, studied: state.studied })
-    });
-    updateAccountBar(resp.ok ? 'connected' : 'error');
-  } catch (e) {
-    updateAccountBar('offline');
+// --- Render ---
+function render() {
+  const app = document.getElementById('app');
+  if (isLoggedIn()) {
+    renderCourseSelection(app);
+  } else {
+    renderLogin(app);
   }
 }
 
-async function cloudPull() {
+function renderLogin(app) {
+  app.innerHTML = `
+    <div class="login-screen">
+      <div class="login-card">
+        <h1>FSI Language Courses</h1>
+        <div class="subtitle">Log in to access course materials and sync your progress across devices.</div>
+        <label for="login-user">Username</label>
+        <input id="login-user" type="text" placeholder="Enter username" autocomplete="username">
+        <label for="login-pass">Password</label>
+        <input id="login-pass" type="password" placeholder="Enter password" autocomplete="current-password">
+        <div class="login-error" id="login-error"></div>
+        <button class="btn primary" id="login-btn">Log In / Sign Up</button>
+      </div>
+    </div>`;
+
+  document.getElementById('login-btn').addEventListener('click', doLogin);
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('login-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus();
+  });
+  document.getElementById('login-user').focus();
+}
+
+function renderCourseSelection(app) {
   const acct = getAccount();
-  if (!acct) return;
-  updateAccountBar('syncing');
-  try {
-    const resp = await fetch(SYNC_URL + '?code=' + encodeURIComponent(acct.key));
-    if (resp.ok) {
-      const data = await resp.json();
-      if (data && data.srs) {
-        for (const [key, remote] of Object.entries(data.srs)) {
-          const local = state.srs[key];
-          if (!local || remote.correct > local.correct || (remote.correct === local.correct && remote.next > local.next)) {
-            state.srs[key] = remote;
-          }
-        }
-        if (data.studied) Object.assign(state.studied, data.studied);
-        localStorage.setItem('fsi-studied', JSON.stringify(state.studied));
-        localStorage.setItem('fsi-srs', JSON.stringify(state.srs));
-        render();
-      }
-      updateAccountBar('connected');
-    } else {
-      updateAccountBar('connected');
-    }
-  } catch (e) {
-    updateAccountBar('offline');
-  }
+  app.innerHTML = `
+    <div class="top-bar">
+      <span class="username">Logged in as <strong>${acct.username}</strong></span>
+      <button class="btn small" id="logout-btn">Log Out</button>
+    </div>
+    <div class="container">
+      <div class="page-header">
+        <h1>FSI Language Courses</h1>
+        <p>Study materials from the Foreign Service Institute, designed for US government personnel learning languages for diplomatic service.</p>
+      </div>
+      <div class="courses-grid">
+        <a href="courses/chinese/index.html" class="course-card chinese">
+          <div class="course-icon">&#x4E2D;</div>
+          <h2>FSI Standard Chinese</h2>
+          <div class="course-desc">A comprehensive Mandarin Chinese course covering pronunciation, vocabulary, and conversation across 4 volumes and 10+ modules.</div>
+          <div class="course-meta">
+            <span>309 audio lessons</span>
+            <span class="dot"></span>
+            <span>4 volumes</span>
+          </div>
+        </a>
+        <a href="courses/spanish/index.html" class="course-card spanish">
+          <div class="course-icon">&#xD1;</div>
+          <h2>FSI Spanish Basic Course</h2>
+          <div class="course-desc">The classic FSI Spanish Basic Course with structured drills, dialogues, and comprehensive grammar coverage for beginners.</div>
+          <div class="course-meta">
+            <span>237 audio lessons</span>
+            <span class="dot"></span>
+            <span>55 units</span>
+          </div>
+        </a>
+      </div>
+    </div>`;
+
+  document.getElementById('logout-btn').addEventListener('click', doLogout);
 }
 
 async function doLogin() {
   const user = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value;
   const err = document.getElementById('login-error');
-  if (!user || !pass) { err.textContent = 'Enter both fields'; return; }
-  if (pass.length < 4) { err.textContent = 'Password too short'; return; }
+
+  if (!user || !pass) {
+    err.textContent = 'Please enter both username and password.';
+    return;
+  }
+  if (pass.length < 4) {
+    err.textContent = 'Password must be at least 4 characters.';
+    return;
+  }
   err.textContent = '';
+
   const key = await hashCredentials(user, pass);
   localStorage.setItem('fsi-account', JSON.stringify({ username: user, key }));
-  renderAccountBar();
-  cloudPull();
+  render();
 }
 
 function doLogout() {
   localStorage.removeItem('fsi-account');
-  renderAccountBar();
-}
-
-function updateAccountBar(status) {
-  const dot = document.getElementById('sync-dot');
-  const txt = document.getElementById('sync-status-text');
-  if (!dot || !txt) return;
-  const labels = { syncing: 'Syncing...', connected: 'Synced', error: 'Sync failed', offline: 'Offline' };
-  dot.className = 'sync-dot ' + (status === 'syncing' ? 'syncing' : status === 'connected' ? 'connected' : 'disconnected');
-  txt.textContent = labels[status] || status;
-}
-
-function renderAccountBar() {
-  const bar = document.getElementById('account-bar');
-  if (!bar) return;
-  const acct = getAccount();
-  if (acct) {
-    bar.innerHTML = `
-      <div class="sync-status">
-        <span class="sync-dot connected" id="sync-dot"></span>
-        <span id="sync-status-text">Synced</span>
-      </div>
-      <div style="font-size:13px;color:var(--text);margin-bottom:8px">Logged in as <strong>${acct.username}</strong></div>
-      <button class="btn" style="width:100%;font-size:12px" onclick="doLogout()">Log Out</button>`;
-  } else {
-    bar.innerHTML = `
-      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Log in to sync progress across devices</div>
-      <input id="login-user" placeholder="Username" style="width:100%;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;margin-bottom:6px">
-      <input id="login-pass" type="password" placeholder="Password" style="width:100%;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:13px;margin-bottom:6px"
-        onkeydown="if(event.key==='Enter')doLogin()">
-      <div id="login-error" style="color:var(--red);font-size:11px;min-height:14px"></div>
-      <button class="btn primary" style="width:100%;font-size:12px;margin-top:4px" onclick="doLogin()">Log In / Sign Up</button>`;
-  }
-}
-
-// Init account bar and auto-sync on load
-renderAccountBar();
-if (isLoggedIn()) {
-  setTimeout(() => cloudPull(), 500);
-}
-
-function markStudied(moduleId, cardIdx) {
-  const key = `${moduleId}-${cardIdx}`;
-  state.srs[key] = state.srs[key] || { interval: 1, next: Date.now(), correct: 0 };
-  saveState();
-}
-
-function markAnswer(moduleId, cardIdx, correct) {
-  const key = `${moduleId}-${cardIdx}`;
-  let card = state.srs[key] || { interval: 1, next: Date.now(), correct: 0 };
-  if (correct) {
-    card.correct++;
-    card.interval = Math.min(card.interval * 2.5, 30);
-  } else {
-    card.correct = Math.max(0, card.correct - 1);
-    card.interval = 1;
-  }
-  card.next = Date.now() + card.interval * 86400000;
-  state.srs[key] = card;
-  saveState();
-}
-
-function getDueCards(moduleId, vocab) {
-  const now = Date.now();
-  return vocab.map((v, i) => ({ vocab: v, idx: i })).filter(({ idx }) => {
-    const key = `${moduleId}-${idx}`;
-    const card = state.srs[key];
-    return !card || card.next <= now;
-  });
-}
-
-function getModuleProgress(moduleId, vocab) {
-  if (!vocab || vocab.length === 0) return 0;
-  let studied = 0;
-  vocab.forEach((v, i) => {
-    const key = `${moduleId}-${i}`;
-    if (state.srs[key] && state.srs[key].correct >= 1) studied++;
-  });
-  return Math.round((studied / vocab.length) * 100);
-}
-
-// ============================================================
-// RENDERING
-// ============================================================
-function render() {
-  const main = document.getElementById('main-content');
-  const view = state.currentView;
-
-  // Update sidebar active state
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.view === view);
-  });
-
-  // Update progress dots
-  updateProgressDots();
-
-  if (view === 'dashboard') renderDashboard(main);
-  else if (view === 'study-guide') renderStudyGuide(main);
-  else if (view.startsWith('module-RES-')) renderResourceModule(main, view.replace('module-RES-', ''));
-  else if (view.startsWith('module-0')) renderCoreModule(main, view.replace('module-', ''));
-  else renderOptionalModule(main, view.replace('module-', ''));
-}
-
-function updateProgressDots() {
-  document.querySelectorAll('.nav-item[data-view]').forEach(el => {
-    const view = el.dataset.view;
-    const dot = el.querySelector('.progress-dot');
-    if (!dot) return;
-    let vocab = [];
-    let moduleId = '';
-    if (view.startsWith('module-0')) {
-      const num = view.replace('module-', '');
-      if (MODULES[num]) { vocab = MODULES[num].vocab; moduleId = num; }
-    } else if (view.startsWith('module-') && !view.startsWith('module-RES-')) {
-      const code = view.replace('module-', '');
-      if (OPTIONAL_MODULES[code]) { vocab = OPTIONAL_MODULES[code].vocab; moduleId = 'opt-' + code; }
-    }
-    if (vocab.length > 0) {
-      const progress = getModuleProgress(moduleId, vocab);
-      dot.className = 'progress-dot ' + (progress >= 80 ? 'done' : progress > 0 ? 'partial' : 'none');
-    }
-  });
-}
-
-function renderDashboard(el) {
-  let totalVocab = 0, totalStudied = 0;
-  Object.entries(MODULES).forEach(([id, m]) => {
-    totalVocab += m.vocab.length;
-    m.vocab.forEach((v, i) => {
-      const key = `${id}-${i}`;
-      if (state.srs[key] && state.srs[key].correct >= 1) totalStudied++;
-    });
-  });
-  Object.entries(OPTIONAL_MODULES).forEach(([code, m]) => {
-    totalVocab += m.vocab.length;
-    m.vocab.forEach((v, i) => {
-      const key = `opt-${code}-${i}`;
-      if (state.srs[key] && state.srs[key].correct >= 1) totalStudied++;
-    });
-  });
-  const pct = totalVocab > 0 ? Math.round((totalStudied / totalVocab) * 100) : 0;
-
-  el.innerHTML = `
-    <div class="welcome-card">
-      <h2>Welcome to FSI Standard Chinese</h2>
-      <p>A comprehensive Mandarin Chinese course developed by the Foreign Service Institute for US diplomats. Work through the modules sequentially, starting with the Resource Module for pronunciation fundamentals.</p>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value">${totalVocab}</div>
-        <div class="stat-label">Total Vocabulary Words</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${totalStudied}</div>
-        <div class="stat-label">Words Studied</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">${pct}%</div>
-        <div class="stat-label">Overall Progress</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">309</div>
-        <div class="stat-label">Audio Lessons</div>
-      </div>
-    </div>
-    <h3>Recommended Study Order</h3>
-    <div class="study-tip"><strong>Start here:</strong> Begin with the Resource Module sections (Pronunciation & Romanization, Tones & Drills) to build your phonetic foundation before moving to Module 01.</div>
-    <h3>Core Modules</h3>
-    <div class="module-grid">
-      ${Object.entries(MODULES).map(([id, m]) => {
-        const progress = getModuleProgress(id, m.vocab);
-        return `<div class="module-card" onclick="navigate('module-${id}')">
-          <h3>Module ${id} — ${m.name}</h3>
-          <p>${m.description}</p>
-          <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-          <p style="font-size:11px;color:var(--text2)">${m.units} units &middot; ${m.vocab.length} words &middot; ${progress}% studied</p>
-        </div>`;
-      }).join('')}
-    </div>
-    <h3 style="margin-top:24px">Optional Modules</h3>
-    <div class="module-grid">
-      ${Object.entries(OPTIONAL_MODULES).map(([code, m]) => {
-        const progress = getModuleProgress('opt-'+code, m.vocab);
-        return `<div class="module-card" onclick="navigate('module-${code}')">
-          <h3>${m.name}</h3>
-          <p>${m.units} units &middot; ${m.vocab.length} words</p>
-          <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-        </div>`;
-      }).join('')}
-    </div>
-  `;
-}
-
-function renderStudyGuide(el) {
-  el.innerHTML = `
-    <h2>How to Study with FSI Standard Chinese</h2>
-    <p class="subtitle">Tips for getting the most out of this course</p>
-
-    <div class="study-tip"><strong>About this course:</strong> This is the Foreign Service Institute's Standard Chinese course, used to train US diplomats. It follows an audio-lingual method — heavy on listening and repetition. The course uses Pinyin romanization throughout.</div>
-
-    <h3>Understanding the Tape Types</h3>
-    <div class="grammar-box">
-      <h4><span class="tape-type C">C</span> Comprehension Tapes</h4>
-      <p>Listen to dialogues and conversations. Focus on understanding the overall meaning first, then specific details. Listen multiple times before checking the text.</p>
-    </div>
-    <div class="grammar-box">
-      <h4><span class="tape-type D">D</span> Drill Tapes</h4>
-      <p>Pattern practice and substitution drills. The tape gives you a prompt, pauses for your response, then gives the correct answer. Speak out loud during the pauses!</p>
-    </div>
-    <div class="grammar-box">
-      <h4><span class="tape-type P">P</span> Practice Tapes</h4>
-      <p>Application exercises that combine what you've learned. These give you more open-ended practice with the material from the unit.</p>
-    </div>
-
-    <h3>Recommended Daily Routine</h3>
-    <div class="grammar-box">
-      <h4>Step 1: Review flashcards (10 min)</h4>
-      <p>Go through due flashcards for your current module. Focus on ones you've gotten wrong before.</p>
-    </div>
-    <div class="grammar-box">
-      <h4>Step 2: Listen to Comprehension tape (15 min)</h4>
-      <p>Listen without looking at the text first. Try to catch words you know. Then listen again with the PDF text open.</p>
-    </div>
-    <div class="grammar-box">
-      <h4>Step 3: Do the Drill tape (20 min)</h4>
-      <p>Actively participate — say your answers out loud during pauses. Use the slow playback speed (0.75x) if needed at first.</p>
-    </div>
-    <div class="grammar-box">
-      <h4>Step 4: Practice tape (15 min)</h4>
-      <p>This is where it all comes together. Try to respond naturally without overthinking.</p>
-    </div>
-    <div class="grammar-box">
-      <h4>Step 5: Study new vocabulary (10 min)</h4>
-      <p>Learn 5-10 new words from the vocabulary list. Write them, say them, use them in sentences.</p>
-    </div>
-
-    <h3>Playback Speed Tips</h3>
-    <div class="study-tip"><strong>Slow down:</strong> Use 0.75x speed when first encountering new material. The original tapes were designed for classroom use with a teacher to pause and explain.</div>
-    <div class="study-tip"><strong>Speed up:</strong> Once you're comfortable with a unit, try 1.25x to train your ear for natural-speed conversation.</div>
-
-    <h3>How the Flashcard System Works</h3>
-    <p style="margin-top:8px;color:var(--text2);font-size:14px">This app uses spaced repetition (SRS). When you get a card right, you won't see it again for a while. Get it wrong, and it comes back soon. Your progress is saved in your browser automatically.</p>
-  `;
-}
-
-function renderResourceModule(el, section) {
-  const sec = RESOURCE_SECTIONS[section];
-  const tapes = [];
-  for (let i = 1; i <= sec.tapeCount; i++) {
-    tapes.push({ label: `Tape ${i}`, file: `Resource Module/FSI - Standard Chinese - Resource Module - ${sec.tapePrefix} - Tape ${i}.mp3` });
-  }
-
-  el.innerHTML = `
-    <h2>${sec.name}</h2>
-    <p class="subtitle">Resource Module</p>
-    <div class="pdf-links">
-      <a class="pdf-link" href="0002-FSI-StandardChinese-ResourceModule-StudentText.pdf" target="_blank">
-        <span class="pdf-icon">&#128196;</span> Resource Module Student Text (PDF)
-      </a>
-    </div>
-    <h3>Audio Tapes</h3>
-    <div class="unit-group">
-      <div class="unit-group-body">
-        ${tapes.map(t => `
-          <div class="audio-row">
-            <span class="audio-label">${t.label}</span>
-            <audio controls preload="none" src="${encodeURI(t.file)}"></audio>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-    <div class="speed-control" style="margin-top:12px">
-      <span style="font-size:13px;color:var(--text2)">Playback speed:</span>
-      ${[0.5, 0.75, 1, 1.25, 1.5].map(s => `<button class="speed-btn ${state.playbackRate===s?'active':''}" onclick="setSpeed(${s})">${s}x</button>`).join('')}
-    </div>
-  `;
-}
-
-function buildAudioForModule(folderName, moduleCode, moduleNum, units, hasReview, reviewLabels, tapeFormat) {
-  let html = '';
-  const prefix = `FSI - Standard Chinese - Module ${moduleNum} ${moduleCode}`;
-
-  if (tapeFormat === 'simple') {
-    // Modules 07-09: simple "Tape 1, Tape 2" per unit, review tapes with Tape 1/2, no criterion test
-    if (hasReview && reviewLabels) {
-      html += `<div class="unit-group"><div class="unit-group-header" onclick="this.nextElementSibling.classList.toggle('hidden')">Review</div>
-        <div class="unit-group-body">
-          ${reviewLabels.map(r => [1,2].map(t => `<div class="audio-row">
-            <span class="audio-label">${r} - Tape ${t}</span>
-            <audio controls preload="none" src="${encodeURI(folderName + '/' + prefix + ' - ' + r + ' - Tape ' + t + '.mp3')}"></audio>
-          </div>`).join('')).join('')}
-        </div></div>`;
-    }
-    for (let u = 1; u <= units; u++) {
-      const unitStr = u.toString().padStart(2, '0');
-      html += `<div class="unit-group">
-        <div class="unit-group-header" onclick="this.nextElementSibling.classList.toggle('hidden')">Unit ${u}</div>
-        <div class="unit-group-body">`;
-      for (let t = 1; t <= 2; t++) {
-        const fileName = `${prefix} - Unit ${unitStr} - Tape ${t}.mp3`;
-        html += `<div class="audio-row">
-          <span class="audio-label">Tape ${t}</span>
-          <audio controls preload="none" src="${encodeURI(folderName + '/' + fileName)}"></audio>
-        </div>`;
-      }
-      html += `</div></div>`;
-    }
-    return html;
-  }
-
-  // Modules 01-06: C/D/P tape format with Criterion Test
-  html += `<div class="unit-group"><div class="unit-group-header" onclick="this.nextElementSibling.classList.toggle('hidden')">Criterion Test</div>
-    <div class="unit-group-body">
-      <div class="audio-row">
-        <span class="audio-label">Test</span>
-        <audio controls preload="none" src="${encodeURI(folderName + '/' + prefix + ' - Criterion Test.mp3')}"></audio>
-      </div>
-    </div></div>`;
-
-  if (hasReview && reviewLabels) {
-    html += `<div class="unit-group"><div class="unit-group-header" onclick="this.nextElementSibling.classList.toggle('hidden')">Review</div>
-      <div class="unit-group-body">
-        ${reviewLabels.map(r => `<div class="audio-row">
-          <span class="audio-label">${r}</span>
-          <audio controls preload="none" src="${encodeURI(folderName + '/' + prefix + ' - ' + r + '.mp3')}"></audio>
-        </div>`).join('')}
-      </div></div>`;
-  }
-
-  for (let u = 1; u <= units; u++) {
-    const unitStr = u.toString().padStart(2, '0');
-    // Module 01 units 1-2 have 1 part each; all other units have 2 parts for C and P
-    const cParts = (moduleNum === '01' && u <= 2) ? 1 : 2;
-    const pParts = (moduleNum === '01' && u <= 2) ? 1 : 2;
-    const tapeTypes = [
-      { code: 'C', label: 'Comprehension', parts: cParts },
-      { code: 'D', label: 'Drill', parts: 1 },
-      { code: 'P', label: 'Practice', parts: pParts }
-    ];
-
-    html += `<div class="unit-group">
-      <div class="unit-group-header" onclick="this.nextElementSibling.classList.toggle('hidden')">Unit ${u}</div>
-      <div class="unit-group-body">`;
-
-    for (const tt of tapeTypes) {
-      for (let p = 1; p <= tt.parts; p++) {
-        const fileName = `${prefix} - Unit ${unitStr} - Tape ${u}${tt.code}-${p}.mp3`;
-        html += `<div class="audio-row">
-          <span class="audio-label">${tt.label} ${tt.parts > 1 ? p : ''} <span class="tape-type ${tt.code}">${tt.code}</span></span>
-          <audio controls preload="none" src="${encodeURI(folderName + '/' + fileName)}"></audio>
-        </div>`;
-      }
-    }
-    html += `</div></div>`;
-  }
-
-  return html;
-}
-
-function renderCoreModule(el, moduleId) {
-  const m = MODULES[moduleId];
-  if (!m) { el.innerHTML = '<p>Module not found.</p>'; return; }
-  const moduleNum = moduleId;
-  state.cardIndex = 0;
-  state.flipped = false;
-  state.quizMode = false;
-
-  el.innerHTML = `
-    <h2>Module ${moduleId} — ${m.name}</h2>
-    <p class="subtitle">${m.description}</p>
-    <div class="tabs">
-      <div class="tab active" data-tab="audio" onclick="switchTab(this, 'audio')">Audio</div>
-      <div class="tab" data-tab="vocab" onclick="switchTab(this, 'vocab')">Vocabulary (${m.vocab.length})</div>
-      <div class="tab" data-tab="flashcards" onclick="switchTab(this, 'flashcards')">Flashcards</div>
-      <div class="tab" data-tab="quiz" onclick="switchTab(this, 'quiz')">Quiz</div>
-      <div class="tab" data-tab="grammar" onclick="switchTab(this, 'grammar')">Grammar</div>
-    </div>
-    <div id="tab-audio">
-      <div class="pdf-links">
-        ${m.pdfs.map(p => `<a class="pdf-link" href="${encodeURI(m.folder + '/' + p)}" target="_blank"><span class="pdf-icon">&#128196;</span> ${p.includes('Workbook') ? 'Student Workbook' : 'Student Text'}</a>`).join('')}
-      </div>
-      <div class="speed-control" style="margin-bottom:16px">
-        <span style="font-size:13px;color:var(--text2)">Playback speed:</span>
-        ${[0.5, 0.75, 1, 1.25, 1.5].map(s => `<button class="speed-btn ${state.playbackRate===s?'active':''}" onclick="setSpeed(${s})">${s}x</button>`).join('')}
-      </div>
-      ${buildAudioForModule(m.folder, m.code, moduleNum, m.units, m.hasReview, m.reviewLabels, m.tapeFormat)}
-    </div>
-    <div id="tab-vocab" class="hidden">
-      ${renderVocabTable(m.vocab)}
-    </div>
-    <div id="tab-flashcards" class="hidden">
-      ${renderFlashcards(moduleId, m.vocab)}
-    </div>
-    <div id="tab-quiz" class="hidden">
-      ${renderQuiz(moduleId, m.vocab)}
-    </div>
-    <div id="tab-grammar" class="hidden">
-      ${m.grammar.map(g => `<div class="grammar-box"><h4>${g.title}</h4><p>${g.text}</p><p class="example">${g.example}</p></div>`).join('')}
-    </div>
-  `;
-}
-
-function renderOptionalModule(el, code) {
-  const m = OPTIONAL_MODULES[code];
-  if (!m) { el.innerHTML = '<p>Module not found.</p>'; return; }
-  state.cardIndex = 0;
-  state.flipped = false;
-
-  const audioRows = [];
-  for (let u = 1; u <= m.units; u++) {
-    audioRows.push({
-      label: `Unit ${u}`,
-      file: `Optional Modules/FSI - Standard Chinese - Optional Module ${m.prefix} - Unit ${u.toString().padStart(2,'0')}.mp3`
-    });
-  }
-
-  el.innerHTML = `
-    <h2>${m.name}</h2>
-    <p class="subtitle">Optional Module</p>
-    <div class="tabs">
-      <div class="tab active" data-tab="audio" onclick="switchTab(this, 'audio')">Audio</div>
-      <div class="tab" data-tab="vocab" onclick="switchTab(this, 'vocab')">Vocabulary (${m.vocab.length})</div>
-      <div class="tab" data-tab="flashcards" onclick="switchTab(this, 'flashcards')">Flashcards</div>
-    </div>
-    <div id="tab-audio">
-      <div class="pdf-links">
-        <a class="pdf-link" href="${encodeURI('Optional Modules/' + m.pdf)}" target="_blank"><span class="pdf-icon">&#128196;</span> Student Text</a>
-      </div>
-      <div class="speed-control" style="margin-bottom:16px">
-        <span style="font-size:13px;color:var(--text2)">Playback speed:</span>
-        ${[0.5, 0.75, 1, 1.25, 1.5].map(s => `<button class="speed-btn ${state.playbackRate===s?'active':''}" onclick="setSpeed(${s})">${s}x</button>`).join('')}
-      </div>
-      <div class="unit-group">
-        <div class="unit-group-body">
-          ${audioRows.map(t => `<div class="audio-row">
-            <span class="audio-label">${t.label}</span>
-            <audio controls preload="none" src="${encodeURI(t.file)}"></audio>
-          </div>`).join('')}
-        </div>
-      </div>
-    </div>
-    <div id="tab-vocab" class="hidden">
-      ${renderVocabTable(m.vocab)}
-    </div>
-    <div id="tab-flashcards" class="hidden">
-      ${renderFlashcards('opt-' + code, m.vocab)}
-    </div>
-  `;
-}
-
-function renderVocabTable(vocab) {
-  return `<table class="vocab-table">
-    <thead><tr><th>Chinese</th><th>Pinyin</th><th>English</th><th>Type</th></tr></thead>
-    <tbody>
-      ${vocab.map(v => `<tr>
-        <td class="vocab-chinese">${v[0]}</td>
-        <td class="vocab-pinyin">${v[1]}</td>
-        <td>${v[2]}</td>
-        <td><span class="vocab-type">${v[3]}</span></td>
-      </tr>`).join('')}
-    </tbody>
-  </table>`;
-}
-
-function renderFlashcards(moduleId, vocab) {
-  if (vocab.length === 0) return '<p>No vocabulary for this module.</p>';
-  const due = getDueCards(moduleId, vocab);
-  const count = due.length;
-  return `
-    <div class="flashcard-controls">
-      <button class="btn" onclick="shuffleCards('${moduleId}')">Shuffle</button>
-      <button class="btn" onclick="resetCards('${moduleId}')">Reset Progress</button>
-      <span style="color:var(--text2);font-size:13px;margin-left:auto">${count} cards due for review</span>
-    </div>
-    <div class="card-counter" id="card-counter">Card 1 of ${vocab.length}</div>
-    <div class="flashcard-container">
-      <div class="flashcard" id="flashcard" onclick="flipCard()">
-        <div class="flashcard-face flashcard-front">
-          <div class="flashcard-chinese" id="fc-chinese">${vocab[0][0]}</div>
-          <div class="flashcard-hint">Click to reveal</div>
-        </div>
-        <div class="flashcard-face flashcard-back">
-          <div class="flashcard-chinese" id="fc-chinese2">${vocab[0][0]}</div>
-          <div class="flashcard-pinyin" id="fc-pinyin">${vocab[0][1]}</div>
-          <div class="flashcard-english" id="fc-english">${vocab[0][2]}</div>
-          <div class="flashcard-meta" id="fc-type">${vocab[0][3]}</div>
-        </div>
-      </div>
-    </div>
-    <div class="flashcard-controls" style="justify-content:center;margin-top:16px">
-      <button class="btn" onclick="prevCard('${moduleId}')">&larr; Previous</button>
-      <button class="btn red" onclick="markWrong('${moduleId}')">Hard</button>
-      <button class="btn green" onclick="markRight('${moduleId}')">Easy</button>
-      <button class="btn" onclick="nextCard('${moduleId}')">Next &rarr;</button>
-    </div>
-  `;
-}
-
-function renderQuiz(moduleId, vocab) {
-  if (vocab.length < 4) return '<p>Need at least 4 vocabulary words for quiz mode.</p>';
-  return `
-    <div id="quiz-area">
-      <div class="card-counter" id="quiz-counter">Question 1</div>
-      <div class="flashcard-container">
-        <div style="background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:32px;text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center">
-          <div class="flashcard-chinese" id="quiz-prompt"></div>
-        </div>
-      </div>
-      <div id="quiz-options" style="margin-top:16px"></div>
-      <div style="margin-top:16px;text-align:center">
-        <button class="btn primary" id="quiz-next" onclick="nextQuizQuestion('${moduleId}')" style="display:none">Next Question &rarr;</button>
-      </div>
-      <div id="quiz-score" style="text-align:center;margin-top:12px;color:var(--text2);font-size:14px"></div>
-    </div>
-  `;
-}
-
-// ============================================================
-// INTERACTION HANDLERS
-// ============================================================
-let currentVocab = [];
-let currentModuleId = '';
-let quizScore = { correct: 0, total: 0 };
-let quizAnswered = false;
-
-function navigate(view) {
-  state.currentView = view;
-  state.cardIndex = 0;
-  state.flipped = false;
-  quizScore = { correct: 0, total: 0 };
-  quizAnswered = false;
-
-  // Determine current vocab
-  if (view.startsWith('module-0')) {
-    const id = view.replace('module-', '');
-    currentModuleId = id;
-    currentVocab = MODULES[id] ? MODULES[id].vocab : [];
-  } else if (view.startsWith('module-') && !view.startsWith('module-RES-')) {
-    const code = view.replace('module-', '');
-    currentModuleId = 'opt-' + code;
-    currentVocab = OPTIONAL_MODULES[code] ? OPTIONAL_MODULES[code].vocab : [];
-  } else {
-    currentVocab = [];
-    currentModuleId = '';
-  }
-
-  render();
-  window.scrollTo(0, 0);
-
-  // Initialize quiz if quiz tab visible
-  setTimeout(() => {
-    if (document.getElementById('quiz-prompt') && currentVocab.length >= 4) {
-      generateQuizQuestion(currentModuleId);
-    }
-  }, 50);
-}
-
-function switchTab(tabEl, tabId) {
-  tabEl.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  tabEl.classList.add('active');
-  ['audio','vocab','flashcards','quiz','grammar'].forEach(id => {
-    const el = document.getElementById('tab-' + id);
-    if (el) el.classList.toggle('hidden', id !== tabId);
-  });
-
-  if (tabId === 'quiz' && currentVocab.length >= 4) {
-    quizScore = { correct: 0, total: 0 };
-    quizAnswered = false;
-    setTimeout(() => generateQuizQuestion(currentModuleId), 50);
-  }
-}
-
-function setSpeed(rate) {
-  state.playbackRate = rate;
-  document.querySelectorAll('audio').forEach(a => a.playbackRate = rate);
-  document.querySelectorAll('.speed-btn').forEach(b => {
-    b.classList.toggle('active', parseFloat(b.textContent) === rate);
-  });
-}
-
-function flipCard() {
-  const card = document.getElementById('flashcard');
-  if (card) {
-    state.flipped = !state.flipped;
-    card.classList.toggle('flipped', state.flipped);
-  }
-}
-
-function updateCard(moduleId) {
-  const vocab = currentVocab;
-  if (!vocab || vocab.length === 0) return;
-  const v = vocab[state.cardIndex];
-  const el = id => document.getElementById(id);
-  if (el('fc-chinese')) el('fc-chinese').textContent = v[0];
-  if (el('fc-chinese2')) el('fc-chinese2').textContent = v[0];
-  if (el('fc-pinyin')) el('fc-pinyin').textContent = v[1];
-  if (el('fc-english')) el('fc-english').textContent = v[2];
-  if (el('fc-type')) el('fc-type').textContent = v[3];
-  if (el('card-counter')) el('card-counter').textContent = `Card ${state.cardIndex + 1} of ${vocab.length}`;
-  state.flipped = false;
-  const card = document.getElementById('flashcard');
-  if (card) card.classList.remove('flipped');
-}
-
-function nextCard(moduleId) {
-  if (state.cardIndex < currentVocab.length - 1) {
-    state.cardIndex++;
-    updateCard(moduleId);
-  }
-}
-
-function prevCard(moduleId) {
-  if (state.cardIndex > 0) {
-    state.cardIndex--;
-    updateCard(moduleId);
-  }
-}
-
-function markRight(moduleId) {
-  markAnswer(moduleId, state.cardIndex, true);
-  nextCard(moduleId);
-}
-
-function markWrong(moduleId) {
-  markAnswer(moduleId, state.cardIndex, false);
-  nextCard(moduleId);
-}
-
-function shuffleCards(moduleId) {
-  if (currentVocab.length > 0) {
-    for (let i = currentVocab.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [currentVocab[i], currentVocab[j]] = [currentVocab[j], currentVocab[i]];
-    }
-    state.cardIndex = 0;
-    updateCard(moduleId);
-  }
-}
-
-function resetCards(moduleId) {
-  if (!confirm('Reset all progress for this module?')) return;
-  currentVocab.forEach((v, i) => {
-    delete state.srs[`${moduleId}-${i}`];
-  });
-  saveState();
   render();
 }
 
-// Quiz
-function generateQuizQuestion(moduleId) {
-  const vocab = currentVocab;
-  if (vocab.length < 4) return;
-  quizAnswered = false;
-
-  const qIdx = Math.floor(Math.random() * vocab.length);
-  const q = vocab[qIdx];
-  const isChToEn = Math.random() > 0.5;
-
-  const prompt = document.getElementById('quiz-prompt');
-  if (prompt) prompt.textContent = isChToEn ? q[0] : q[2];
-
-  // Generate options
-  const correctAnswer = isChToEn ? q[2] : q[0];
-  let options = [{ text: correctAnswer, correct: true }];
-  const usedIdxs = new Set([qIdx]);
-
-  while (options.length < 4) {
-    const rIdx = Math.floor(Math.random() * vocab.length);
-    if (usedIdxs.has(rIdx)) continue;
-    usedIdxs.add(rIdx);
-    const wrong = isChToEn ? vocab[rIdx][2] : vocab[rIdx][0];
-    options.push({ text: wrong, correct: false });
-  }
-
-  // Shuffle options
-  for (let i = options.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [options[i], options[j]] = [options[j], options[i]];
-  }
-
-  const optEl = document.getElementById('quiz-options');
-  if (optEl) {
-    optEl.innerHTML = options.map((o, i) => `<div class="quiz-option" data-correct="${o.correct}" onclick="answerQuiz(this, '${moduleId}', ${qIdx})">${o.text}</div>`).join('');
-  }
-
-  const counter = document.getElementById('quiz-counter');
-  if (counter) counter.textContent = `Question ${quizScore.total + 1}`;
-
-  const nextBtn = document.getElementById('quiz-next');
-  if (nextBtn) nextBtn.style.display = 'none';
-}
-
-function answerQuiz(el, moduleId, qIdx) {
-  if (quizAnswered) return;
-  quizAnswered = true;
-  const isCorrect = el.dataset.correct === 'true';
-
-  quizScore.total++;
-  if (isCorrect) {
-    quizScore.correct++;
-    markAnswer(moduleId, qIdx, true);
-  } else {
-    markAnswer(moduleId, qIdx, false);
-  }
-
-  // Highlight correct/wrong
-  document.querySelectorAll('.quiz-option').forEach(opt => {
-    if (opt.dataset.correct === 'true') opt.classList.add('correct');
-    else if (opt === el) opt.classList.add('wrong');
-  });
-
-  const score = document.getElementById('quiz-score');
-  if (score) score.textContent = `Score: ${quizScore.correct} / ${quizScore.total} (${Math.round(quizScore.correct/quizScore.total*100)}%)`;
-
-  const nextBtn = document.getElementById('quiz-next');
-  if (nextBtn) nextBtn.style.display = 'inline-block';
-}
-
-function nextQuizQuestion(moduleId) {
-  generateQuizQuestion(moduleId);
-}
-
-// Navigation from sidebar
-document.querySelectorAll('.nav-item[data-view]').forEach(el => {
-  el.addEventListener('click', () => navigate(el.dataset.view));
-});
-
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
-  if (e.key === 'ArrowRight') nextCard(currentModuleId);
-  if (e.key === 'ArrowLeft') prevCard(currentModuleId);
-  if (e.key === '1') markWrong(currentModuleId);
-  if (e.key === '2') markRight(currentModuleId);
-});
-
-// Set playback rate on audio play
-document.addEventListener('play', e => {
-  if (e.target.tagName === 'AUDIO') e.target.playbackRate = state.playbackRate;
-}, true);
-
-// Initial render
+// --- Init ---
 render();
 </script>
 </body>

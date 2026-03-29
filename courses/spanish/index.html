@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSI Spanish Basic Course - Study Companion</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #242836;
+  --border: #2e3345;
+  --text: #e4e6ed;
+  --text2: #9ca3b8;
+  --accent: #6c8cff;
+  --accent2: #4a6adf;
+  --green: #4ade80;
+  --red: #f87171;
+  --orange: #fb923c;
+  --yellow: #facc15;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* Layout */
+.app { display: flex; min-height: 100vh; }
+.sidebar { width: 280px; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; z-index: 10; }
+.main { flex: 1; margin-left: 280px; padding: 32px; max-width: 900px; }
+
+/* Sidebar */
+.sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
+.sidebar-header h1 { font-size: 16px; color: var(--accent); }
+.sidebar-header p { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.back-link { display: block; padding: 10px 20px; font-size: 13px; color: var(--text2); text-decoration: none; border-bottom: 1px solid var(--border); transition: all 0.15s; }
+.back-link:hover { background: var(--surface2); color: var(--text); }
+.nav-section { padding: 12px 0; }
+.nav-section-title { padding: 8px 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.nav-section-title:hover { color: var(--text); }
+.nav-section-title .arrow { font-size: 10px; transition: transform 0.2s; }
+.nav-section-title .arrow.open { transform: rotate(90deg); }
+.nav-items { overflow: hidden; }
+.nav-items.collapsed { display: none; }
+.nav-item { padding: 8px 20px 8px 32px; cursor: pointer; font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 8px; transition: all 0.15s; }
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--accent2); color: white; }
+.nav-item .progress-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.nav-item .progress-dot.done { background: var(--green); }
+.nav-item .progress-dot.partial { background: var(--orange); }
+.nav-item .progress-dot.none { background: var(--border); }
+
+/* Section headers */
+h2 { font-size: 24px; margin-bottom: 8px; }
+h3 { font-size: 18px; margin: 20px 0 12px; color: var(--text); }
+.subtitle { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
+
+/* Audio Player */
+.audio-section { margin-bottom: 32px; }
+.unit-group { margin-bottom: 20px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+.unit-group-header { padding: 12px 16px; background: var(--surface2); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.unit-group-header:hover { background: var(--border); }
+.unit-group-header .chevron { font-size: 12px; transition: transform 0.2s; margin-left: auto; color: var(--text2); }
+.unit-group-header .chevron.open { transform: rotate(90deg); }
+.unit-group-body { padding: 8px; }
+.audio-row { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; transition: background 0.15s; }
+.audio-row:hover { background: var(--surface2); }
+.audio-label { font-size: 13px; color: var(--text2); min-width: 120px; }
+audio { flex: 1; height: 32px; }
+audio::-webkit-media-controls-panel { background: var(--surface2); }
+.speed-control { display: flex; align-items: center; gap: 4px; }
+.speed-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.speed-btn:hover, .speed-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Buttons */
+.btn { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-size: 13px; transition: all 0.15s; }
+.btn:hover { background: var(--surface2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+.btn.primary:hover { background: var(--accent2); }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.stat-value { font-size: 28px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+/* Progress bar */
+.progress-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+
+/* PDF links */
+.pdf-links { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+.pdf-link { display: flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); text-decoration: none; font-size: 13px; transition: all 0.15s; }
+.pdf-link:hover { background: var(--surface2); border-color: var(--accent); }
+.pdf-icon { font-size: 18px; }
+
+/* Study tip */
+.study-tip { background: var(--surface); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0; font-size: 14px; }
+.study-tip strong { color: var(--accent); }
+
+/* Dashboard */
+.welcome-card { background: linear-gradient(135deg, #1e3a5f 0%, #2d1b4e 100%); border-radius: 12px; padding: 32px; margin-bottom: 24px; }
+.welcome-card h2 { font-size: 28px; margin-bottom: 8px; }
+.welcome-card p { color: var(--text2); }
+.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; cursor: pointer; transition: all 0.15s; }
+.module-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.module-card h3 { font-size: 15px; margin-bottom: 4px; }
+.module-card p { font-size: 12px; color: var(--text2); }
+
+/* Listened checkbox */
+.listened-check { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 12px; color: var(--text2); cursor: pointer; flex-shrink: 0; }
+.listened-check input { cursor: pointer; accent-color: var(--accent); }
+.listened-check.checked { color: var(--green); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+
+.hidden { display: none !important; }
+
+/* Sync UI */
+.sync-bar { padding: 12px 20px; border-top: 1px solid var(--border); margin-top: auto; }
+.sync-status { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; }
+.sync-dot.connected { background: var(--green); }
+.sync-dot.disconnected { background: var(--red); }
+.sync-dot.syncing { background: var(--yellow); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Mobile hamburger */
+.hamburger { display: none; position: fixed; top: 12px; left: 12px; z-index: 20; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; color: var(--text); cursor: pointer; font-size: 18px; }
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+  .sidebar.open { transform: translateX(0); display: block; }
+  .main { padding-top: 52px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+  <nav class="sidebar" id="sidebar" style="display:flex;flex-direction:column">
+    <a class="back-link" href="../../index.html">&larr; Back to Courses</a>
+    <div class="sidebar-header">
+      <h1>FSI Spanish Basic Course</h1>
+      <p>Volumes 1-4 &middot; 55 Units</p>
+    </div>
+    <div class="nav-section">
+      <div class="nav-item active" data-view="dashboard"><span style="font-size:15px;margin-right:2px">&#9633;</span> Dashboard</div>
+    </div>
+    <div class="nav-section" id="nav-vol1">
+      <div class="nav-section-title" onclick="toggleNavSection('nav-vol1')">Volume 1 (Units 1-15) <span class="arrow open">&#9654;</span></div>
+      <div class="nav-items" id="nav-vol1-items"></div>
+    </div>
+    <div class="nav-section" id="nav-vol2">
+      <div class="nav-section-title" onclick="toggleNavSection('nav-vol2')">Volume 2 (Units 16-30) <span class="arrow">&#9654;</span></div>
+      <div class="nav-items collapsed" id="nav-vol2-items"></div>
+    </div>
+    <div class="nav-section" id="nav-vol3">
+      <div class="nav-section-title" onclick="toggleNavSection('nav-vol3')">Volume 3 (Units 31-45) <span class="arrow">&#9654;</span></div>
+      <div class="nav-items collapsed" id="nav-vol3-items"></div>
+    </div>
+    <div class="nav-section" id="nav-vol4">
+      <div class="nav-section-title" onclick="toggleNavSection('nav-vol4')">Volume 4 (Units 46-55) <span class="arrow">&#9654;</span></div>
+      <div class="nav-items collapsed" id="nav-vol4-items"></div>
+    </div>
+    <div class="sync-bar" id="account-bar"></div>
+  </nav>
+
+  <div class="main" id="main-content"></div>
+</div>
+
+<script>
+// ============================================================
+// LOGIN CHECK
+// ============================================================
+if (!localStorage.getItem('fsi-account')) window.location.href = '../../index.html';
+
+// ============================================================
+// DATA: Course structure
+// ============================================================
+const VOLUMES = {
+  1: {
+    name: 'Volume 1',
+    units: Array.from({length: 15}, (_, i) => i + 1),
+    pdf: 'Fsi-SpanishBasicCourse-Volume1-StudentText.pdf',
+    folder: 'Volume 1',
+    // Units 1-5 have different filename format than 6-15
+    // All have parts A and B only
+    cParts: {}  // no C parts
+  },
+  2: {
+    name: 'Volume 2',
+    units: Array.from({length: 15}, (_, i) => i + 16),
+    pdf: 'Fsi-SpanishBasicCourse-Volume2-StudentText.pdf',
+    folder: 'Volume 2',
+    cParts: { 21: true, 23: true, 24: true, 27: true, 28: true, 30: true }
+  },
+  3: {
+    name: 'Volume 3',
+    units: Array.from({length: 15}, (_, i) => i + 31),
+    pdf: 'Fsi-SpanishBasicCourse-Volume3-StudentText.pdf',
+    folder: 'Volume 3',
+    cParts: { 44: true }
+  },
+  4: {
+    name: 'Volume 4',
+    units: Array.from({length: 10}, (_, i) => i + 46),
+    pdf: 'FSI - Spanish Basic Course - Volume 4 - Student Text.pdf',
+    folder: 'Volume 4'
+  }
+};
+
+// Volume 4 track data: each unit maps to an array of [trackNum, filename_section_after_dash]
+// We store the exact filenames to avoid any guessing
+const VOL4_TRACKS = {
+  46: [
+    ['46_01', '46.1 Basic Sentences'],
+    ['46_02', '46.1 Dialogue For Fluency'],
+    ['46_03', '46.21.1 Pattern Drills I'],
+    ['46_04', '46.21.11 Translation Drill'],
+    ['46_05', '46.21.2 Pattern Drills II'],
+    ['46_06', '46.21.21 Translation Drill'],
+    ['46_07', '46.21.22 Response Drill'],
+    ['46_08', '46.21.23 Translation Drill'],
+    ['46_09', '46.21.3 Pattern Drills III'],
+    ['46_10', '46.21.31 Substitution Drill'],
+    ['46_11', '46.22.11 Review Drills IA'],
+    ['46_12', '46.22.12 Review Drills IB'],
+    ['46_13', '46.22.2 Review Drills II'],
+    ['46_14', '46.22.3 Review Drills III']
+  ],
+  47: [
+    ['47_01', '47.1 Basic Sentences'],
+    ['47_02', '47.1 Dialogue For Fluency'],
+    ['47_03', '47.21.1 Pattern Drills I'],
+    ['47_04', '47.21.11 Substitution Drill I'],
+    ['47_05', '47.21.12 Substitution Drill II'],
+    ['47_06', '47.21.13 Patterned Response Drill'],
+    ['47_07', '47.21.2 Pattern Drills II'],
+    ['47_08', '47.21.21 Response Drills'],
+    ['47_09', '47.22.1 Review Drills I'],
+    ['47_10', '47.22.2 Review Drills II'],
+    ['47_11', '47.22.3 Review Drills III']
+  ],
+  48: [
+    ['48_01', '48.1 Basic Sentences'],
+    ['48_02', '48.1 Dialogue For Fluency'],
+    ['48_03', '48.21.1 Pattern Drills I'],
+    ['48_04', '48.21.12 Response Drill'],
+    ['48_05', '48.21.13 Translation Drills'],
+    ['48_06', '48.21.2 Pattern Drills II'],
+    ['48_07', '48.21.21 Substitution Drills'],
+    ['48_08', '48.21.22 Response Drill'],
+    ['48_09', '48.21.23 Translation Drill'],
+    ['48_10', '48.21.3 Pattern Drills III'],
+    ['48_11', '48.21.31 Substitution Drill'],
+    ['48_12', '48.21.32 Translation Drill'],
+    ['48_13', '48.22.1 Review Drills I'],
+    ['48_14', '48.22.2 Review Drills II'],
+    ['48_15', '48.22.3 Review Drills III']
+  ],
+  49: [
+    ['49_01', '49.1 Basic Sentences'],
+    ['49_02', '49.1 Dialogue For Fluency'],
+    ['49_03', '49.21.1 Pattern Drills I'],
+    ['49_04', '49.21.11 Substitution Drills'],
+    ['49_05', '49.21.12 Response Drill'],
+    ['49_06', '49.21.13 Translation Drill'],
+    ['49_07', '49.21.2 Pattern Drills II'],
+    ['49_08', '49.21.21 Substitution Drills'],
+    ['49_09', '49.21.22 Replacement Drills'],
+    ['49_10', '49.22.1 Review Drills I'],
+    ['49_11', '49.22.2 Review Drills II'],
+    ['49_12', '49.22.3 Review Drills III']
+  ],
+  50: [
+    ['50_01', '50.1 Basic Sentences'],
+    ['50_02', '50.1 Dialogue For Fluency'],
+    ['50_03', '50.21.1 Pattern Drills I'],
+    ['50_04', '50.21.11 Substitution Drill IA'],
+    ['50_05', '50.21.11 Substitution Drill IB'],
+    ['50_06', '50.21.12 Translation Drill'],
+    ['50_07', '50.21.2 Pattern Drills II'],
+    ['50_08', '50.21.21 Substitution Drill IA'],
+    ['50_09', '50.21.21 Substitution Drill IB'],
+    ['50_10', '50.21.22 Patterned Response Drill I'],
+    ['50_11', '50.21.23 Patterned Response Drill II'],
+    ['50_12', '50.21.24 Translation Drill'],
+    ['50_13', '50.21.25 Translation Drill'],
+    ['50_14', '50.22.1 Review Drills I'],
+    ['50_14', '50.22.2 Review Drills II'],
+    ['50_15', '50.22.3 Review Drills III']
+  ],
+  51: [
+    ['51_01', '51.1 Basic Sentences'],
+    ['51_02', '51.1 Dialogue For Fluency'],
+    ['51_03', '51.21.1 Pattern Drills I'],
+    ['51_04', '51.21.11 Substitution Drill'],
+    ['51_05', '51.21.2 Pattern Drills II'],
+    ['51_06', '51.21.21 Substitution Drill'],
+    ['51_07', '51.21.22 Patterned Response Drill I'],
+    ['51_08', '51.21.23 Patterned Response Drill IIA'],
+    ['51_09', '51.21.23 Patterned Response Drill IIB'],
+    ['51_10', '51.21.23 Patterned Response Drill IIC'],
+    ['51_11', '51.21.3 Pattern Drills III'],
+    ['51_12', '51.21.31 Substitution Drill IA'],
+    ['51_13', '51.21.31 Substitution Drill IB'],
+    ['51_14', '51.21.32 Response Drill'],
+    ['51_15', '51.22.1 Review Drills I'],
+    ['51_16', '51.22.2 Review Drills II'],
+    ['51_17', '51.22.3 Review Drills III']
+  ],
+  52: [
+    ['52_01', '52.1 Basic Sentences'],
+    ['52_02', '52.1 Dialogue For Fluency'],
+    ['52_03', '52.21.1 Pattern Drills I'],
+    ['52_04', '52.21.11 Patterned Response Drill I'],
+    ['52_05', '52.21.12 Translation Drill'],
+    ['52_06', '52.21.13 Patterned Response Drill II'],
+    ['52_07', '52.21.14 Substitution Drill'],
+    ['52_08', '52.21.2 Pattern Drills II'],
+    ['52_09', '52.21.21 Patterned Response Drill I'],
+    ['52_10', '52.21.22 Patterned Response Drill IIA'],
+    ['52_11', '52.21.22 Patterned Response Drill IIB'],
+    ['52_12', '52.21.3 Pattern Drills III'],
+    ['52_13', '52.21.31 Patterned Response Drill I'],
+    ['52_14', '52.21.32 Patterned Response Drill II'],
+    ['52_15', '52.21.33 Substitution Drill'],
+    ['52_16', '52.21.34 Translation Drill'],
+    ['52_17', '52.22.2 Review Drills I'],
+    ['52_18', '52.22.3 Review Drills I']
+  ],
+  53: [
+    ['53_01', '53.1 Basic Sentences'],
+    ['53_02', '53.1 Dialogue For Fluency'],
+    ['53_03', '53.21.1 Pattern Drills I'],
+    ['53_04', '53.21.11 Substitution Drill'],
+    ['53_05', '53.21.12 Patterned Response Drill'],
+    ['53_06', '53.21.2 Pattern Drills II'],
+    ['53_07', '53.21.21 Substitution Drill'],
+    ['53_08', '53.21.3 Pattern Drills III'],
+    ['53_09', '53.21.31 Substitution Drill'],
+    ['53_10', '53.21.32 Patterned Response Drill'],
+    ['53_11', '53.22.1 Review Drills I'],
+    ['53_12', '53.22.2 Review Drills II'],
+    ['53_13', '53.22.3 Review Drills III']
+  ],
+  54: [
+    ['54_01', '54.1 Basic Sentences'],
+    ['54_02', '54.1 Dialogue For Fluency'],
+    ['54_03', '54.21.1 Pattern Drills I'],
+    ['54_04', '54.21.11 Response Drills'],
+    ['54_05', '54.21.12 Patterned Response Drill'],
+    ['54_06', '54.21.2 Pattern Drills II'],
+    ['54_07', '54.21.21 Substitution Drill'],
+    ['54_08', '54.21.3 Pattern Drills III'],
+    ['54_09', '54.21.31 Substitution Drill'],
+    ['54_10', '54.22.1 Review Drills']
+  ],
+  55: [
+    ['55_01', '55.1 Basic Sentences'],
+    ['55_02', '55.1 Dialogue For Fluency'],
+    ['55_03', '55.21.1 Pattern Drills'],
+    ['55_04', '55.21.1.1 Suffixes I'],
+    ['55_05', '55.21.1.2 Suffixes II'],
+    ['55_06', '55.21.1.3 Suffixes III'],
+    ['55_07', '55.21.1.4 Suffixes IV'],
+    ['55_08', '55.21.1.5 Suffixes V'],
+    ['55_09', '55.21.1.6 Suffixes VI'],
+    ['55_10', '55.21.1.7 Suffixes VII'],
+    ['55_11', '55.21.1.8 Suffixes VIII'],
+    ['55_12', '55.21.1.9 Suffixes IX'],
+    ['55_13', '55.21.1.10 Suffixes X'],
+    ['55_14', '55.22.1 Review Drills']
+  ]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  currentView: 'dashboard',
+  playbackRate: 1.0,
+  studied: JSON.parse(localStorage.getItem('fsi-spanish-studied') || '{}'),
+  srs: JSON.parse(localStorage.getItem('fsi-spanish-srs') || '{}')
+};
+
+function saveState() {
+  localStorage.setItem('fsi-spanish-studied', JSON.stringify(state.studied));
+  localStorage.setItem('fsi-spanish-srs', JSON.stringify(state.srs));
+  debouncedSync();
+}
+
+// ============================================================
+// ACCOUNT & CLOUD SYNC
+// ============================================================
+const SYNC_URL = 'https://fsi-sync.zackwilson21.workers.dev';
+let syncTimer = null;
+
+function getAccount() {
+  const acct = localStorage.getItem('fsi-account');
+  return acct ? JSON.parse(acct) : null;
+}
+
+function isLoggedIn() { return !!getAccount(); }
+
+function debouncedSync() {
+  if (!isLoggedIn()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => cloudPush(), 2000);
+}
+
+async function cloudPush() {
+  const acct = getAccount();
+  if (!acct) return;
+  updateAccountBar('syncing');
+  try {
+    const resp = await fetch(SYNC_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: acct.key, course: 'spanish', srs: state.srs, studied: state.studied })
+    });
+    updateAccountBar(resp.ok ? 'connected' : 'error');
+  } catch (e) {
+    updateAccountBar('offline');
+  }
+}
+
+async function cloudPull() {
+  const acct = getAccount();
+  if (!acct) return;
+  updateAccountBar('syncing');
+  try {
+    const resp = await fetch(SYNC_URL + '?code=' + encodeURIComponent(acct.key) + '&course=spanish');
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data && data.srs) {
+        for (const [key, remote] of Object.entries(data.srs)) {
+          const local = state.srs[key];
+          if (!local || remote.correct > local.correct || (remote.correct === local.correct && remote.next > local.next)) {
+            state.srs[key] = remote;
+          }
+        }
+        if (data.studied) Object.assign(state.studied, data.studied);
+        localStorage.setItem('fsi-spanish-studied', JSON.stringify(state.studied));
+        localStorage.setItem('fsi-spanish-srs', JSON.stringify(state.srs));
+        render();
+      }
+      updateAccountBar('connected');
+    } else {
+      updateAccountBar('connected');
+    }
+  } catch (e) {
+    updateAccountBar('offline');
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('fsi-account');
+  window.location.href = '../../index.html';
+}
+
+function updateAccountBar(status) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-status-text');
+  if (!dot || !txt) return;
+  const labels = { syncing: 'Syncing...', connected: 'Synced', error: 'Sync failed', offline: 'Offline' };
+  dot.className = 'sync-dot ' + (status === 'syncing' ? 'syncing' : status === 'connected' ? 'connected' : 'disconnected');
+  txt.textContent = labels[status] || status;
+}
+
+function renderAccountBar() {
+  const bar = document.getElementById('account-bar');
+  if (!bar) return;
+  const acct = getAccount();
+  if (acct) {
+    bar.innerHTML = `
+      <div class="sync-status">
+        <span class="sync-dot connected" id="sync-dot"></span>
+        <span id="sync-status-text">Synced</span>
+      </div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:8px">Logged in as <strong>${acct.username}</strong></div>
+      <button class="btn" style="width:100%;font-size:12px" onclick="doLogout()">Log Out</button>`;
+  } else {
+    bar.innerHTML = `<div style="font-size:13px;color:var(--text2)">Not logged in</div>`;
+  }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+// Build audio file path for Volumes 1-3
+function getAudioPath(vol, unit, part) {
+  const unitStr = unit.toString().padStart(2, '0');
+  if (vol === 1) {
+    if (unit <= 5) {
+      // Fsi-SpanishBasicCourse-Volume1-Unit01a.mp3
+      return `Volume 1/Fsi-SpanishBasicCourse-Volume1-Unit${unitStr}${part.toLowerCase()}.mp3`;
+    } else {
+      // FSI - Spanish Basic Course - Volume 1 - Unit 06A.mp3
+      return `Volume 1/FSI - Spanish Basic Course - Volume 1 - Unit ${unitStr}${part.toUpperCase()}.mp3`;
+    }
+  } else if (vol === 2) {
+    return `Volume 2/FSI - Spanish Basic Course - Volume 2 - Unit ${unitStr}${part.toUpperCase()}.mp3`;
+  } else if (vol === 3) {
+    return `Volume 3/FSI - Spanish Basic Course - Volume 3 - Unit ${unitStr}${part.toUpperCase()}.mp3`;
+  }
+  return '';
+}
+
+// Get parts for a unit in volumes 1-3
+function getUnitParts(vol, unit) {
+  const parts = ['A', 'B'];
+  const v = VOLUMES[vol];
+  if (v && v.cParts && v.cParts[unit]) {
+    parts.push('C');
+  }
+  return parts;
+}
+
+// Get the "studied" key for a unit
+function getStudiedKey(vol, unit) {
+  return `v${vol}-u${unit}`;
+}
+
+function isStudied(vol, unit) {
+  return !!state.studied[getStudiedKey(vol, unit)];
+}
+
+function toggleStudied(vol, unit) {
+  const key = getStudiedKey(vol, unit);
+  if (state.studied[key]) {
+    delete state.studied[key];
+  } else {
+    state.studied[key] = Date.now();
+  }
+  saveState();
+  updateProgressDots();
+}
+
+function getVolumeProgress(vol) {
+  const v = VOLUMES[vol];
+  if (!v) return 0;
+  let studied = 0;
+  v.units.forEach(u => {
+    if (isStudied(vol, u)) studied++;
+  });
+  return Math.round((studied / v.units.length) * 100);
+}
+
+function getTotalProgress() {
+  let total = 0, studied = 0;
+  for (let vol = 1; vol <= 4; vol++) {
+    VOLUMES[vol].units.forEach(u => {
+      total++;
+      if (isStudied(vol, u)) studied++;
+    });
+  }
+  return { total, studied, pct: total > 0 ? Math.round((studied / total) * 100) : 0 };
+}
+
+// Extract display label from Vol4 section string (remove the leading number prefix like "46.1 ")
+function getTrackLabel(section) {
+  // Remove leading unit-number prefix like "46.1 ", "46.21.1 ", etc.
+  return section.replace(/^\d+\.\d+(\.\d+)*\s*/, '');
+}
+
+// ============================================================
+// SIDEBAR NAV
+// ============================================================
+function buildSidebarNav() {
+  for (let vol = 1; vol <= 4; vol++) {
+    const container = document.getElementById(`nav-vol${vol}-items`);
+    if (!container) continue;
+    let html = '';
+    VOLUMES[vol].units.forEach(u => {
+      const key = getStudiedKey(vol, u);
+      const dotClass = state.studied[key] ? 'done' : 'none';
+      html += `<div class="nav-item" data-view="unit-${vol}-${u}"><span class="progress-dot ${dotClass}"></span> Unit ${u}</div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  // Attach click handlers
+  document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+    el.addEventListener('click', () => navigate(el.dataset.view));
+  });
+}
+
+function toggleNavSection(id) {
+  const items = document.getElementById(id + '-items');
+  const arrow = document.querySelector(`#${id} .arrow`);
+  if (items) items.classList.toggle('collapsed');
+  if (arrow) arrow.classList.toggle('open');
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function render() {
+  const main = document.getElementById('main-content');
+  const view = state.currentView;
+
+  // Update sidebar active state
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+
+  updateProgressDots();
+
+  if (view === 'dashboard') {
+    renderDashboard(main);
+  } else if (view.startsWith('unit-')) {
+    const parts = view.split('-');
+    const vol = parseInt(parts[1]);
+    const unit = parseInt(parts[2]);
+    if (vol === 4) {
+      renderVol4Unit(main, unit);
+    } else {
+      renderUnit(main, vol, unit);
+    }
+  }
+}
+
+function updateProgressDots() {
+  document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+    const view = el.dataset.view;
+    const dot = el.querySelector('.progress-dot');
+    if (!dot || !view.startsWith('unit-')) return;
+    const parts = view.split('-');
+    const vol = parseInt(parts[1]);
+    const unit = parseInt(parts[2]);
+    const studied = isStudied(vol, unit);
+    dot.className = 'progress-dot ' + (studied ? 'done' : 'none');
+  });
+}
+
+function renderDashboard(el) {
+  const progress = getTotalProgress();
+  const totalTracks = countAllTracks();
+
+  el.innerHTML = `
+    <div class="welcome-card">
+      <h2>FSI Spanish Basic Course</h2>
+      <p>A comprehensive Spanish language course developed by the Foreign Service Institute. Work through the 4 volumes sequentially, starting with Volume 1.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">55</div>
+        <div class="stat-label">Total Units</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${progress.studied}</div>
+        <div class="stat-label">Units Studied</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${progress.pct}%</div>
+        <div class="stat-label">Overall Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${totalTracks}</div>
+        <div class="stat-label">Audio Tracks</div>
+      </div>
+    </div>
+    <h3>Volumes</h3>
+    <div class="module-grid">
+      ${[1,2,3,4].map(vol => {
+        const v = VOLUMES[vol];
+        const pct = getVolumeProgress(vol);
+        const unitRange = `Units ${v.units[0]}-${v.units[v.units.length-1]}`;
+        return `<div class="module-card" onclick="navigate('unit-${vol}-${v.units[0]}')">
+          <h3>${v.name}</h3>
+          <p>${unitRange} &middot; ${v.units.length} units</p>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <p style="font-size:11px;color:var(--text2)">${pct}% complete</p>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="study-tip" style="margin-top:24px"><strong>Tip:</strong> Each unit has Part A and Part B audio tracks. Listen to Part A first to learn the material, then use Part B for drills and practice. Mark units as "listened" to track your progress.</div>
+  `;
+}
+
+function countAllTracks() {
+  let count = 0;
+  // Volumes 1-3: each unit has A, B, and some have C
+  for (let vol = 1; vol <= 3; vol++) {
+    VOLUMES[vol].units.forEach(u => {
+      count += getUnitParts(vol, u).length;
+    });
+  }
+  // Volume 4: count from track data
+  for (const unit of VOLUMES[4].units) {
+    if (VOL4_TRACKS[unit]) count += VOL4_TRACKS[unit].length;
+  }
+  return count;
+}
+
+function renderUnit(el, vol, unit) {
+  const v = VOLUMES[vol];
+  const parts = getUnitParts(vol, unit);
+  const studied = isStudied(vol, unit);
+  const unitStr = unit.toString().padStart(2, '0');
+
+  // Navigation: prev/next unit
+  const allUnits = [];
+  for (let vi = 1; vi <= 4; vi++) VOLUMES[vi].units.forEach(u => allUnits.push({ vol: vi, unit: u }));
+  const idx = allUnits.findIndex(x => x.vol === vol && x.unit === unit);
+  const prev = idx > 0 ? allUnits[idx - 1] : null;
+  const next = idx < allUnits.length - 1 ? allUnits[idx + 1] : null;
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <h2>Unit ${unit}</h2>
+      <label class="listened-check ${studied ? 'checked' : ''}" onclick="toggleStudied(${vol}, ${unit}); render();">
+        <input type="checkbox" ${studied ? 'checked' : ''} onclick="event.stopPropagation(); toggleStudied(${vol}, ${unit}); render();">
+        ${studied ? 'Studied' : 'Mark as studied'}
+      </label>
+    </div>
+    <p class="subtitle">${v.name} &middot; Unit ${unitStr}</p>
+    <div class="pdf-links">
+      <a class="pdf-link" href="${encodeURI(v.folder + '/' + v.pdf)}" target="_blank">
+        <span class="pdf-icon">&#128196;</span> ${v.name} Student Text (PDF)
+      </a>
+    </div>
+    <div class="speed-control" style="margin-bottom:16px">
+      <span style="font-size:13px;color:var(--text2)">Playback speed:</span>
+      ${[0.5, 0.75, 1, 1.25, 1.5].map(s => `<button class="speed-btn ${state.playbackRate===s?'active':''}" onclick="setSpeed(${s})">${s}x</button>`).join('')}
+    </div>
+    <div class="unit-group">
+      <div class="unit-group-header" onclick="toggleGroup(this)">
+        <span>Unit ${unit} Audio</span>
+        <span class="chevron open">&#9654;</span>
+      </div>
+      <div class="unit-group-body">
+        ${parts.map(p => `
+          <div class="audio-row">
+            <span class="audio-label">Part ${p}</span>
+            <audio controls preload="none" src="${encodeURI(getAudioPath(vol, unit, p))}"></audio>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:24px">
+      ${prev ? `<button class="btn" onclick="navigate('unit-${prev.vol}-${prev.unit}')">&larr; Unit ${prev.unit}</button>` : '<span></span>'}
+      ${next ? `<button class="btn" onclick="navigate('unit-${next.vol}-${next.unit}')">Unit ${next.unit} &rarr;</button>` : '<span></span>'}
+    </div>
+  `;
+}
+
+function renderVol4Unit(el, unit) {
+  const v = VOLUMES[4];
+  const tracks = VOL4_TRACKS[unit] || [];
+  const studied = isStudied(4, unit);
+  const unitStr = unit.toString().padStart(2, '0');
+
+  // Navigation
+  const allUnits = [];
+  for (let vi = 1; vi <= 4; vi++) VOLUMES[vi].units.forEach(u => allUnits.push({ vol: vi, unit: u }));
+  const idx = allUnits.findIndex(x => x.vol === 4 && x.unit === unit);
+  const prev = idx > 0 ? allUnits[idx - 1] : null;
+  const next = idx < allUnits.length - 1 ? allUnits[idx + 1] : null;
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <h2>Unit ${unit}</h2>
+      <label class="listened-check ${studied ? 'checked' : ''}" onclick="toggleStudied(4, ${unit}); render();">
+        <input type="checkbox" ${studied ? 'checked' : ''} onclick="event.stopPropagation(); toggleStudied(4, ${unit}); render();">
+        ${studied ? 'Studied' : 'Mark as studied'}
+      </label>
+    </div>
+    <p class="subtitle">Volume 4 &middot; Unit ${unitStr} &middot; ${tracks.length} tracks</p>
+    <div class="pdf-links">
+      <a class="pdf-link" href="${encodeURI(v.folder + '/' + v.pdf)}" target="_blank">
+        <span class="pdf-icon">&#128196;</span> Volume 4 Student Text (PDF)
+      </a>
+    </div>
+    <div class="speed-control" style="margin-bottom:16px">
+      <span style="font-size:13px;color:var(--text2)">Playback speed:</span>
+      ${[0.5, 0.75, 1, 1.25, 1.5].map(s => `<button class="speed-btn ${state.playbackRate===s?'active':''}" onclick="setSpeed(${s})">${s}x</button>`).join('')}
+    </div>
+    <div class="unit-group">
+      <div class="unit-group-header" onclick="toggleGroup(this)">
+        <span>Unit ${unit} Tracks (${tracks.length})</span>
+        <span class="chevron open">&#9654;</span>
+      </div>
+      <div class="unit-group-body">
+        ${tracks.map(([trackId, section]) => {
+          const fileName = `${trackId} FSI - Spanish Basic Course - Volume 4 - Unit ${unitStr} - ${section}.mp3`;
+          const label = getTrackLabel(section);
+          return `<div class="audio-row">
+            <span class="audio-label" style="min-width:200px">${label}</span>
+            <audio controls preload="none" src="${encodeURI('Volume 4/' + fileName)}"></audio>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:24px">
+      ${prev ? `<button class="btn" onclick="navigate('unit-${prev.vol}-${prev.unit}')">&larr; Unit ${prev.unit}</button>` : '<span></span>'}
+      ${next ? `<button class="btn" onclick="navigate('unit-${next.vol}-${next.unit}')">Unit ${next.unit} &rarr;</button>` : '<span></span>'}
+    </div>
+  `;
+}
+
+// ============================================================
+// INTERACTION HANDLERS
+// ============================================================
+function navigate(view) {
+  state.currentView = view;
+  render();
+  window.scrollTo(0, 0);
+  // On mobile, close sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function setSpeed(rate) {
+  state.playbackRate = rate;
+  document.querySelectorAll('audio').forEach(a => a.playbackRate = rate);
+  document.querySelectorAll('.speed-btn').forEach(b => {
+    b.classList.toggle('active', parseFloat(b.textContent) === rate);
+  });
+}
+
+function toggleGroup(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  if (body) body.classList.toggle('hidden');
+  if (chevron) chevron.classList.toggle('open');
+}
+
+// Set playback rate on audio play
+document.addEventListener('play', e => {
+  if (e.target.tagName === 'AUDIO') e.target.playbackRate = state.playbackRate;
+}, true);
+
+// ============================================================
+// INIT
+// ============================================================
+buildSidebarNav();
+renderAccountBar();
+if (isLoggedIn()) {
+  setTimeout(() => cloudPull(), 500);
+}
+render();
+</script>
+</body>
+</html>

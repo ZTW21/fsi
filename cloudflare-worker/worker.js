@@ -1,9 +1,8 @@
-// FSI Chinese Study App - Sync Worker
+// FSI Language Study App - Sync Worker
 // Deploy this as a Cloudflare Worker with a KV namespace bound as "PROGRESS"
 
 export default {
   async fetch(request, env) {
-    // CORS headers for cross-origin requests
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
@@ -17,6 +16,7 @@ export default {
     if (request.method === 'GET') {
       const url = new URL(request.url);
       const code = url.searchParams.get('code');
+      const course = url.searchParams.get('course');
       if (!code) {
         return new Response(JSON.stringify({ error: 'Missing code' }), {
           status: 400,
@@ -24,8 +24,14 @@ export default {
         });
       }
 
-      const key = 'progress:' + code;
-      const data = await env.PROGRESS.get(key);
+      const key = course ? `progress:${code}:${course}` : `progress:${code}`;
+      let data = await env.PROGRESS.get(key);
+
+      // Migration: if course-specific key has no data, try the old flat key
+      if (!data && course) {
+        data = await env.PROGRESS.get(`progress:${code}`);
+      }
+
       if (!data) {
         return new Response(JSON.stringify(null), {
           status: 404,
@@ -41,6 +47,7 @@ export default {
     if (request.method === 'PUT') {
       const body = await request.json();
       const code = body.code;
+      const course = body.course;
       if (!code) {
         return new Response(JSON.stringify({ error: 'Missing code' }), {
           status: 400,
@@ -48,7 +55,7 @@ export default {
         });
       }
 
-      const key = 'progress:' + code;
+      const key = course ? `progress:${code}:${course}` : `progress:${code}`;
       const payload = JSON.stringify({ srs: body.srs, studied: body.studied, updated: Date.now() });
       await env.PROGRESS.put(key, payload);
 

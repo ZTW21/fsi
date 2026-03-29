@@ -4,4 +4,4 @@ compatibility_date = "2024-01-01"
 
 [[kv_namespaces]]
 binding = "PROGRESS"
-id = "" # Fill this in after creating the KV namespace
+id = "cc906a051a9a4efd841d1a1b29eb3dc7"
